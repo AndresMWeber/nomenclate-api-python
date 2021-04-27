@@ -23,17 +23,15 @@ package:
 provider:
   name: aws
   profile: aw
-  runtime: python3.6
+  runtime: python3.8
   stage: ${self:custom.serverlessBranch, self:custom.gitBranch, opt:stage, env:STAGE}
   region: ${opt:region, 'us-east-1'}
-  deploymentBucket:
-    name: ${self:service}-deploys
   memorySize: 512
   tags:
     GIT-USER: ${self:custom.serverlessGitUser}
     PROPERTY: "nomenclate"
   environment:
-    DEBUG: ${env:DEBUG, 'octolistener:*'}
+    DEBUG: ${env:DEBUG, 'nomenclate-api:*'}
     SLS_DEBUG: ${env:SLS_DEBUG, ''}
     REGION: ${self:provider.region}
     STAGE: ${env:STAGE, self:provider.stage}
@@ -48,13 +46,13 @@ provider:
 
 custom:
   wsgi:
-    app: nomenclate_api.app.app
+    app: nomenclate_api.api.app
     packRequirements: false
   pythonRequirements:
     dockerizePip: non-linux
   customDomain:
     domainName: ${self:provider.environment.DOMAIN}
-    basePath: '${self:provider.stage}'
+    basePath: ''
     stage: ${self:provider.stage}
     createRoute53Record: true
   subdomains:
@@ -73,13 +71,13 @@ functions:
     environment:
       MONGO_URI: ${env:MONGO_URI}
   hello:
-    handler: nomenclate_api.handler.hello
+    handler: nomenclate_api.handlers.hello.handler
     events:
       - http:
           path: hello
           method: get
   goodbye:
-    handler: nomenclate_api.handler.goodbye
+    handler: nomenclate_api.handlers.goodbye.handler
     events:
       - http:
           path: goodbye

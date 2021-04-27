@@ -1,20 +1,15 @@
-import os
-import pymongo
-from dotenv import load_dotenv
-from flask import Flask, request, jsonify
+from flask import request, jsonify, Blueprint
 
-# Initialize Flask App
-app = Flask(__name__)
+default_routes = Blueprint("default_routes", __name__)
 
-load_dotenv()
-myclient = pymongo.MongoClient(os.environ.get("MONGO_URI", "mongodb://localhost:27017/"))
-mongo_db = myclient["nomenclate-api"]
 
-@app.route("/")
+@default_routes.route("/")
 def hello():
+    print('default')
     return "Hello World!"
 
-@app.route("/add", methods=["POST"])
+
+@default_routes.route("/add", methods=["POST"])
 def create():
     """
     create() : Add document to Firestore collection with request body
@@ -29,7 +24,7 @@ def create():
         return f"An Error Occured: {e}"
 
 
-@app.route("/list", methods=["GET"])
+@default_routes.route("/list", methods=["GET"])
 def read():
     """
     read() : Fetches documents from Firestore collection as JSON
@@ -49,7 +44,7 @@ def read():
         return f"An Error Occured: {e}"
 
 
-@app.route("/update", methods=["POST", "PUT"])
+@default_routes.route("/update", methods=["POST", "PUT"])
 def update():
     """
     update() : Update document in Firestore collection with request body
@@ -64,7 +59,7 @@ def update():
         return f"An Error Occured: {e}"
 
 
-@app.route("/delete", methods=["GET", "DELETE"])
+@default_routes.route("/delete", methods=["GET", "DELETE"])
 def delete():
     """
     delete() : Delete a document from Firestore collection
@@ -76,8 +71,3 @@ def delete():
         return jsonify({"success": True}), 200
     except Exception as e:
         return f"An Error Occured: {e}"
-
-
-port = int(os.environ.get("PORT", 8080))
-if __name__ == "__main__":
-    app.run(threaded=True, host="0.0.0.0", port=port)
