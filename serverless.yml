@@ -1,0 +1,86 @@
+service: nomenclate-api
+org: andresmweber
+
+plugins:
+  - serverless-wsgi
+  - serverless-python-requirements
+  - serverless-domain-manager
+  - serverless-plugin-git-variables
+  - serverless-offline
+  - serverless-export-env
+  - serverless-dotenv-plugin
+
+package:
+  include:
+    - src/**/*
+  exclude:
+    - ./node_modules/
+    - tests/**
+    - package.json
+    - package-lock.json
+  individually: true
+
+provider:
+  name: aws
+  profile: aw
+  runtime: python3.6
+  stage: ${self:custom.serverlessBranch, self:custom.gitBranch, opt:stage, env:STAGE}
+  region: ${opt:region, 'us-east-1'}
+  deploymentBucket:
+    name: ${self:service}-deploys
+  memorySize: 512
+  tags:
+    GIT-USER: ${self:custom.serverlessGitUser}
+    PROPERTY: "nomenclate"
+  environment:
+    DEBUG: ${env:DEBUG, 'octolistener:*'}
+    SLS_DEBUG: ${env:SLS_DEBUG, ''}
+    REGION: ${self:provider.region}
+    STAGE: ${env:STAGE, self:provider.stage}
+    DOMAIN: nom-${self:custom.subdomain}.andresmweber.com
+    AW_SLACK_URL: ${ssm:/aw/slack/octoprint~true}
+    AW_BUCKET: ${self:custom.imageBucket}
+    AW_BRANCH: ${self:custom.serverlessBranch, self:custom.gitBranch}
+    GIT_BRANCH: ${self:custom.gitBranch}
+    COVERALLS_SERVICE_NAME: serverless
+    COVERALLS_REPO_TOKEN: ${ssm:/aw/octo-listener/coveralls~true}
+    COVERALLS_GIT_BRANCH: ${self:custom.serverlessBranch, self:custom.gitBranch}
+
+custom:
+  wsgi:
+    app: nomenclate_api.app.app
+    packRequirements: false
+  pythonRequirements:
+    dockerizePip: non-linux
+  customDomain:
+    domainName: ${self:provider.environment.DOMAIN}
+    basePath: '${self:provider.stage}'
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+  subdomains:
+    main: 'api'
+  subdomain: ${self:custom.subdomains.${self:provider.stage}, ${self:provider.stage}}
+  gitBranch: ${git:branch}
+  serverlessBranch: ${env:SERVERLESS_BRANCH}
+  serverlessGitUser: ${env:SERVERLESS_COMMIT_USER}
+
+functions:
+  app:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
+    environment:
+      MONGO_URI: ${env:MONGO_URI}
+  hello:
+    handler: nomenclate_api.handler.hello
+    events:
+      - http:
+          path: hello
+          method: get
+  goodbye:
+    handler: nomenclate_api.handler.goodbye
+    events:
+      - http:
+          path: goodbye
+          method: get
