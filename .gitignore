@@ -148,3 +148,6 @@ node_modules/
 
 # vscode
 .vscode/
+
+# TMP files
+*.*~
