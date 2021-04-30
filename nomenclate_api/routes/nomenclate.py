@@ -1,7 +1,7 @@
 from flask import Response, request
 from flask_jwt_extended import jwt_required
 from flask_restful import Resource
-from nomenclate_api.models.user import Nomenclate
+from nomenclate_api.models.nomenclate import Nomenclate
 
 
 class NomenclateApi(Resource):

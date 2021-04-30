@@ -5,7 +5,7 @@ default_routes = Blueprint("default_routes", __name__)
 
 @default_routes.route("/")
 def hello():
-    print('default')
+    print("default")
     return "Hello World!"
 
 

@@ -1,6 +1,3 @@
-def handler(event, context): 
-    response = {
-        "statusCode": 200,
-        "body": 'Hello, world!'
-    }
+def handler(event, context):
+    response = {"statusCode": 200, "body": "Hello, world!"}
     return response

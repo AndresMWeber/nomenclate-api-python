@@ -1,11 +1,18 @@
 from typing import Tuple
-from flask import jsonify
+from flask import jsonify, make_response
 from bson.objectid import ObjectId
 import datetime
 import json
 
-def format_response(payload: dict, status: int) -> Tuple[str, int]:
-    return jsonify(payload), status
+
+def format_response(payload: dict = None, status: int = 200) -> Tuple[str, int]:
+    if payload == None and status == 200:
+        payload = {"success": True}
+    return make_response(jsonify(payload), status)
+
+
+def format_error(message: str, status: int) -> Tuple[str, int]:
+    return format_response({"error": message}, status)
 
 
 class JSONEncoder(json.JSONEncoder):
