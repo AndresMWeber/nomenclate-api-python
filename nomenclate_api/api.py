@@ -39,8 +39,8 @@ def create_app():
     api.add_resource(LoginApi, "/auth/login")
     api.add_resource(DeactivateApi, "/auth/deactivate")
     api.add_resource(ReactivateApi, "/auth/reactivate")
-    api.add_resource(NomenclateApi, "/nom")
-    api.add_resource(ConfigApi, "/cfg")
+    api.add_resource(NomenclateApi, "/nomenclate")
+    api.add_resource(ConfigApi, "/config")
 
     Bcrypt(app)
     JWTManager(app)

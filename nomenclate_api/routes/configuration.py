@@ -1,23 +1,43 @@
+from mongoengine.errors import NotUniqueError
+from pymongo.errors import DuplicateKeyError
 from flask import Response, request
-from flask_jwt_extended import jwt_required
-from nomenclate_api.models.configuration import Config
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
+from ..models.configuration import Config
+from ..models.user import User
+from ..utils.responses import format_response, format_error
 
 
 class ConfigApi(Resource):
-    @jwt_required
+    @jwt_required()
+    def get(self):
+        try:
+            return format_response(Config.objects.get(creator=get_jwt_identity()))
+        except:
+            return format_error("You do not have a configuration.", 404)
+
+    @jwt_required()
     def post(self):
-        body = request.get_json()
-        movie = Config(**body).save()
-        return "", 200
+        json = request.get_json()
+        try:
+            Config(creator=User.get_from_jwt(), **request.get_json()).save()
+            return format_response()
+        except (NotUniqueError, DuplicateKeyError):
+            return format_error("You already have a configuration set up.", 409)
 
-    @jwt_required
-    def put(self, id):
+    @jwt_required()
+    def put(self):
         body = request.get_json()
-        Config.objects.get(id=id).update(**body)
-        return "", 200
+        try:
+            Config.objects.get(creator=get_jwt_identity()).update(**body)
+            return format_response()
+        except:
+            return format_error("You do not have a configuration.", 404)
 
-    @jwt_required
-    def delete(self, id):
-        movie = Config.objects.get(id=id).delete()
-        return "", 200
+    @jwt_required()
+    def delete(self):
+        try:
+            Config.objects.get(creator=get_jwt_identity()).delete()
+            return format_response()
+        except:
+            return format_error("You do not have a configuration.", 404)

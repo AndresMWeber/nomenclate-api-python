@@ -22,17 +22,7 @@ class SignupApi(Resource):
             return format_response({"id": str(id)}, 201)
         except NotUniqueError:
             user = User.objects.get(email=body.get("email"))
-            if (
-                user
-                and user.active == False
-                and user.check_password(body.get("password"))
-            ):
-                user.active = True
-                user.save()
-                return format_response(
-                    {"id": user.id, "message": "Reactivated account."},
-                )
-            return format_error("That email address is already in use.", 403)
+            return format_error("That email address is already in use.", 409)
         except ValidationError as e:
             return format_error(str(e), 400)
         except Exception as e:
@@ -42,11 +32,11 @@ class SignupApi(Resource):
 
 class LoginApi(Resource):
     def post(self):
-        email = body.get("email")
         body = request.get_json()
+        email = body.get("email")
         user = User.objects.get(email=email)
         if not user.active:
-            return format_error(f"The user account {email} is not active.", 401)
+            return format_error("The specified user account is not active.", 401)
         if not user.check_password(body.get("password")):
             return format_error("Email or password invalid", 401)
         expires = datetime.timedelta(days=7)
@@ -55,25 +45,33 @@ class LoginApi(Resource):
 
 
 class DeactivateApi(Resource):
-    @jwt_required
+    @jwt_required()
     def post(self):
-        body = request.get_json()
-        user = User.objects.get(id=get_jwt_identity()).first()
-        if not user:
-            return format_error("Invalid user specified", 401)
-        user.active = False
-        user.save()
-        return format_response(status=200)
+        user = User.objects.get(id=get_jwt_identity())
+        if user:
+            if not user.active:
+                return format_error("User already deactivated", 409)
+            user.deactivate()
+            return format_response()
+        return format_error(f"Logged in user not found.", status=404)
 
 
 class ReactivateApi(Resource):
+    @jwt_required(optional=True)
     def post(self):
-        email = body.get("email")
-        user = User.objects.get(email=email)
-        if user and not user.active and user.check_password(body.get("password")):
-            user.active = True
-            user.save()
-            return format_response(
-                {"id": user.id, "message": "Reactivated account."},
-            )
+        user = None
+        jwt = get_jwt_identity()
+        if jwt:
+            user = User.objects.get(id=jwt)
+        else:
+            body = request.get_json() or {}
+            email = body.get("email")
+            user = User.objects.get(email=email)
+            if not user.check_password(body.get("password")):
+                return format_error("Incorrect username or password.", 401)
+        if user:
+            if user.active:
+                return format_response("Account already active.")
+            user.activate()
+            return format_response()
         return format_error(f"User with email {email} not found.", status=404)

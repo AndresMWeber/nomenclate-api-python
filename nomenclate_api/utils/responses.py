@@ -8,6 +8,8 @@ import json
 def format_response(payload: dict = None, status: int = 200) -> Tuple[str, int]:
     if payload == None and status == 200:
         payload = {"success": True}
+    if isinstance(payload, str):
+        payload = {"message": payload}
     return make_response(jsonify(payload), status)
 
 
