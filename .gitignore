@@ -145,6 +145,7 @@ serverless*.py
 wsgi*.py
 .serverless/
 node_modules/
+.serverless-wsgi
 
 # vscode
 .vscode/

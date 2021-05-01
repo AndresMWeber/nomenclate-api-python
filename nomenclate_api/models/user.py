@@ -1,7 +1,7 @@
-from .config import db
 from flask_login import UserMixin, LoginManager
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_jwt_extended import get_jwt_identity
+from nomenclate_api.db.config import db
 
 login_manager = LoginManager()
 
@@ -11,6 +11,7 @@ class User(UserMixin, db.Document):
     email = db.EmailField(required=True, unique=True)
     password = db.StringField(required=True, min_length=6)
     active = db.BooleanField(default=True)
+    config = db.ReferenceField("Config")
     meta = {"collection": "users"}
 
     def hash_password(self):

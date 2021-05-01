@@ -1,8 +1,7 @@
 import datetime
-from pprint import pprint
 from logging import getLogger
 from mongoengine.errors import NotUniqueError, ValidationError
-from flask import Response, request
+from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from ..models.user import User

@@ -1,4 +1,4 @@
-from .config import db
+from nomenclate_api.db.config import db
 
 
 class Nomenclate(db.Document):

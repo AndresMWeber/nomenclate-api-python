@@ -1,4 +1,4 @@
-from os import getenv, environ
+from os import getenv
 from dotenv import load_dotenv
 from datetime import timedelta
 from flask import Flask
@@ -12,7 +12,10 @@ from .models.user import login_manager
 def create_app():
     load_dotenv()
     app = Flask(__name__)
+    Bcrypt(app)
+    JWTManager(app)
     api = Api(app)
+
     mongo_uri = getenv("MONGO_URI")
     if not mongo_uri or mongo_uri == "undefined":
         mongo_uri = "mongodb://localhost:27017/nomenclate-api"
@@ -21,18 +24,14 @@ def create_app():
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
     app.json_encoder = JSONEncoder
 
-    from .models.config import db
+    from nomenclate_api.db.config import db
 
     db.init_app(app)
-
     login_manager.init_app(app)
-
-    from .routes.default import default_routes
-
-    app.register_blueprint(default_routes)
 
     from .routes.auth import SignupApi, LoginApi, DeactivateApi, ReactivateApi
     from .routes.configuration import ConfigApi
+    from .routes.profile import ActiveConfigApi, ProfileConfigApi, ProfileApi
     from .routes.nomenclate import NomenclateApi
 
     api.add_resource(SignupApi, "/auth/signup")
@@ -40,10 +39,10 @@ def create_app():
     api.add_resource(DeactivateApi, "/auth/deactivate")
     api.add_resource(ReactivateApi, "/auth/reactivate")
     api.add_resource(NomenclateApi, "/nomenclate")
-    api.add_resource(ConfigApi, "/config")
-
-    Bcrypt(app)
-    JWTManager(app)
+    api.add_resource(ConfigApi, "/config", "/config/<string:name>")
+    api.add_resource(ProfileApi, "/me")
+    api.add_resource(ProfileConfigApi, "/me/configs")
+    api.add_resource(ActiveConfigApi, "/me/config")
 
     with app.app_context():
         print(f"Connecting to DB: {mongo_uri}")

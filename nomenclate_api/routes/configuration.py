@@ -1,43 +1,48 @@
+from logging import getLogger
 from mongoengine.errors import NotUniqueError
 from pymongo.errors import DuplicateKeyError
-from flask import Response, request
+from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
+from nomenclate_api.db.config import db
 from ..models.configuration import Config
 from ..models.user import User
 from ..utils.responses import format_response, format_error
 
 
-class ConfigApi(Resource):
-    @jwt_required()
-    def get(self):
-        try:
-            return format_response(Config.objects.get(creator=get_jwt_identity()))
-        except:
-            return format_error("You do not have a configuration.", 404)
+log = getLogger()
 
-    @jwt_required()
+
+class ConfigApi(Resource):
+    decorators = [jwt_required()]
+
+    def get(self, name):
+        try:
+            return format_response(Config.from_request(name).to_mongo())
+        except:
+            return format_error("The requested configuration does not exist.", 404)
+
     def post(self):
-        json = request.get_json()
         try:
             Config(creator=User.get_from_jwt(), **request.get_json()).save()
             return format_response()
         except (NotUniqueError, DuplicateKeyError):
-            return format_error("You already have a configuration set up.", 409)
+            return format_error("The specified configuration already exists.", 409)
 
-    @jwt_required()
     def put(self):
-        body = request.get_json()
         try:
-            Config.objects.get(creator=get_jwt_identity()).update(**body)
+            request_json = request.get_json()
+            request_json.pop("creator")
+            id = request_json.pop("_id")
+            Config.objects.get(id=id).update(**request.get_json())
             return format_response()
-        except:
-            return format_error("You do not have a configuration.", 404)
+        except Exception as e:
+            print(e)
+            return format_error("The requested resource does not exist.", 404)
 
-    @jwt_required()
-    def delete(self):
+    def delete(self, name):
         try:
-            Config.objects.get(creator=get_jwt_identity()).delete()
+            Config.from_request(name).delete()
             return format_response()
         except:
-            return format_error("You do not have a configuration.", 404)
+            return format_error("The requested configuration does not exist.", 404)

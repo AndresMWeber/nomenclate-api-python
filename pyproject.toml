@@ -60,3 +60,8 @@ freeze = {shell = "poetry export -f requirements.txt > requirements.txt --withou
 mksandwich = {script = "my_package.sandwich:build"}
 # simple command based task
 test = "pytest --cov tests/"
+
+[tool.black]
+line-length = 100
+target-version = ['py38']
+include = '\.pyi?$'

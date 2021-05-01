@@ -1,4 +1,4 @@
-from ..models.config import db
+from nomenclate_api.db.config import db
 
 
 def is_owner(document: db.Document):
