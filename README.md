@@ -55,7 +55,7 @@ An API using the Nomenclate package to automate and generate strings based on ar
 
 ### Install steps
 1. `npm install`  
-2. `poetry install`
+2. `poetry install` (To install in the top level directory always: `poetry config virtualenvs.in-project true`)
 3. You should now have access to the serverless CLI (if you haven't, you need to login using `sls login`)
 4. Now feel free to [invoke the lambdas](https://www.serverless.com/framework/docs/providers/aws/cli-reference/invoke-local/) using `sls invoke local --function <function name>`
 

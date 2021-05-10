@@ -29,20 +29,21 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
 
-    from .routes.auth import SignupApi, LoginApi, DeactivateApi, ReactivateApi
-    from .routes.configuration import ConfigApi
+    from .routes.auth import SignupApi, LoginApi, DeactivateApi, ReactivateApi, UserExistsApi
     from .routes.profile import ActiveConfigApi, ProfileConfigApi, ProfileApi
+    from .routes.configuration import ConfigApi
     from .routes.nomenclate import NomenclateApi
 
     api.add_resource(SignupApi, "/auth/signup")
     api.add_resource(LoginApi, "/auth/login")
+    api.add_resource(UserExistsApi, "/auth/exists")
     api.add_resource(DeactivateApi, "/auth/deactivate")
     api.add_resource(ReactivateApi, "/auth/reactivate")
-    api.add_resource(NomenclateApi, "/nomenclate")
-    api.add_resource(ConfigApi, "/config", "/config/<string:name>")
     api.add_resource(ProfileApi, "/me")
     api.add_resource(ProfileConfigApi, "/me/configs")
     api.add_resource(ActiveConfigApi, "/me/config")
+    api.add_resource(ConfigApi, "/config", "/config/<string:name>")
+    api.add_resource(NomenclateApi, "/nomenclate")
 
     with app.app_context():
         print(f"Connecting to DB: {mongo_uri}")

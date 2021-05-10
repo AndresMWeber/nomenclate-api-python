@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import List, Tuple, Union
 from flask import jsonify, make_response
 from bson.objectid import ObjectId
 import datetime
@@ -13,7 +13,7 @@ def format_response(payload: dict = None, status: int = 200) -> Tuple[str, int]:
     return make_response(jsonify(payload), status)
 
 
-def format_error(message: str, status: int) -> Tuple[str, int]:
+def format_error(message: Union[str, List[str]], status: int) -> Tuple[str, int]:
     return format_response({"error": message}, status)
 
 

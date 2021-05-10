@@ -1,3 +1,4 @@
+import requests
 from nomenclate_api import __version__
 import nomenclate_api
 

@@ -1,16 +1,31 @@
 import datetime
 from logging import getLogger
 from mongoengine.errors import NotUniqueError, ValidationError
+from marshmallow import fields
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from ..models.user import User
 from ..utils.responses import format_response, format_error
+from .base import ApiRoute, validate_schema, BaseSchema
 
 log = getLogger()
 
 
-class SignupApi(Resource):
+class EmailSchema(BaseSchema):
+    email = fields.String(required=True)
+
+
+class EmailPasswordSchema(EmailSchema):
+    password = fields.String(required=True)
+
+
+class NameEmailPasswordSchema(EmailPasswordSchema):
+    name = fields.String(required=True)
+
+
+class SignupApi(ApiRoute):
+    @validate_schema(NameEmailPasswordSchema())
     def post(self):
         try:
             body = request.get_json()
@@ -29,7 +44,20 @@ class SignupApi(Resource):
             return format_error("There was a problem creating the user.", 400)
 
 
-class LoginApi(Resource):
+class UserExistsApi(ApiRoute):
+    @validate_schema(EmailSchema())
+    def post(self):
+        body = request.get_json()
+        email = body.get("email")
+        try:
+            bool(User.objects.get(email=email))
+            return format_response({"exists": True}, 200)
+        except:
+            return format_response({"exists": False}, 404)
+
+
+class LoginApi(ApiRoute):
+    @validate_schema(EmailPasswordSchema())
     def post(self):
         body = request.get_json()
         email = body.get("email")
@@ -37,13 +65,13 @@ class LoginApi(Resource):
         if not user.active:
             return format_error("The specified user account is not active.", 401)
         if not user.check_password(body.get("password")):
-            return format_error("Email or password invalid", 401)
+            return format_error("Email or password invalid", 400)
         expires = datetime.timedelta(days=7)
         access_token = create_access_token(identity=str(user.id), expires_delta=expires)
         return format_response({"token": access_token}, 200)
 
 
-class DeactivateApi(Resource):
+class DeactivateApi(ApiRoute):
     @jwt_required()
     def post(self):
         user = User.objects.get(id=get_jwt_identity())
@@ -55,7 +83,7 @@ class DeactivateApi(Resource):
         return format_error(f"Logged in user not found.", status=404)
 
 
-class ReactivateApi(Resource):
+class ReactivateApi(ApiRoute):
     @jwt_required(optional=True)
     def post(self):
         user = None
@@ -63,10 +91,11 @@ class ReactivateApi(Resource):
         if jwt:
             user = User.objects.get(id=jwt)
         else:
-            body = request.get_json() or {}
+            body = request.get_json()
             email = body.get("email")
+            password = body.get("password")
             user = User.objects.get(email=email)
-            if not user.check_password(body.get("password")):
+            if not user.check_password(password):
                 return format_error("Incorrect username or password.", 401)
         if user:
             if user.active:
