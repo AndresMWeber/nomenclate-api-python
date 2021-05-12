@@ -11,6 +11,9 @@
     <a href="https://github.com/AndresMWeber/nomenclate-api-python/issues">
         <img alt="Issues" src="https://img.shields.io/github/issues/andresmweber/nomenclate-api-python.svg" />
     </a>
+    <a href="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/python-app.yml">
+        <img alt="Issues" src="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/python-app.yml/badge.svg" />
+    </a>
     <br />
     <a href="https://github.com/AndresMWeber/nomenclate-api-python/blob/master/LICENSE">
         <img alt="License" src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" />
@@ -19,6 +22,7 @@
         <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/andresmweber/nomenclate-api-python" />
     </a>
 </div>
+
 <br />
 
 <p align="center">
