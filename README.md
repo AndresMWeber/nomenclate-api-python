@@ -1,5 +1,5 @@
 <p align="center">
-    <img width=200px height=200px src="/docs/logo.png" alt="nomenclate logo">
+    <img width=200px height=200px src="/docs/nomenclate_logo.png" alt="nomenclate logo">
 </p>
 
 <h2 align="center">Nomenclate API</h2>
