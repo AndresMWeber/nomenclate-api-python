@@ -1,5 +1,8 @@
 components:
   schemas:
+    Base:
+      properties: {}
+      type: object
     ConfigurationPost:
       properties:
         data:
@@ -54,6 +57,13 @@ components:
       required:
       - error
       type: object
+    LoginResponse:
+      properties:
+        token:
+          type: string
+      required:
+      - token
+      type: object
     NameEmailPassword:
       properties:
         email:
@@ -69,8 +79,7 @@ components:
       type: object
 info:
   contact:
-    email:
-    - Andres Weber <andresmweber@gmail.com>
+    email: andresmweber@gmail.com
   description: Nomenclate Api
   license:
     name: Apache 2.0
@@ -79,44 +88,205 @@ info:
   version: 0.1.0
 openapi: 3.0.2
 paths:
-  /auth/signup:
-    post: {}
+  /auth/signup: {}
   /auth/login:
-    post: {}
-  /auth/exists:
-    post: {}
+    post:
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+          description: Return a nomenclate object
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: Email or password invalid.
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The specified user account is not active.
+  /auth/exists: {}
   /auth/deactivate:
-    post: {}
+    post:
+      responses:
+        '200':
+          description: Deactivated account successfully
+        '404':
+          description: Logged in user not found.
+        '409':
+          description: User already deactivated.
   /auth/reactivate:
-    post: {}
+    post:
+      responses:
+        '200':
+          description: User already deactivated.
+        '401':
+          description: Incorrect username or password.
+        '404':
+          description: Logged in user not found.
   /me:
-    get: {}
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Base'
+          description: Return a Profile
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The user from the current credentials does not exist
   /me/configs:
-    get: {}
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Base'
+          description: Return all configs created by the logged in user
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: Missing config
   /me/config:
-    post: {}
-    get: {}
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Base'
+          description: Return the logged in user's active config
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: Missing config
+    post:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Base'
+          description: Return a Profile
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: Missing config
   /config:
-    post: {}
-    delete: {}
-    put: {}
+    put:
+      responses:
+        '204':
+          description: Sucessfully updated the requested configuration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The requested resource does not exist.
+    delete:
+      responses:
+        '204':
+          description: Sucessfully deleted the requested configuration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The requested resource does not exist.
+    post:
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Base'
+          description: Return a nomenclate object
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The supplied payload is invalid.
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The specified configuration already exists.
   /config/{name}:
-    get: {}
+    get:
+      parameters:
+      - description: Name of the config to get
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Base'
+          description: Return the config
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The requested resource does not exist.
   /nomenclate:
-    post: {}
-    delete: {}
-    put: {}
+    put:
+      responses:
+        '204':
+          description: Sucessfully updated the nomenclate object
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The supplied payload is invalid.
+    delete:
+      responses:
+        '204':
+          description: Sucessfully deleted the nomenclate object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The nomenclate object is invalid.
+    post:
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Base'
+          description: Return a nomenclate object
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The supplied payload is invalid.
 servers:
 - description: Production Server
   url: https://nom-api.andresmweber.com/
-tags:
-- Poetry
-- Virtual Environments
-- Tutorial
-- Packages
-- Packaging
-- nomenclate
-- naming
-- automatic
-- generator
-- convention
+tags: []

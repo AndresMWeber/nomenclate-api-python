@@ -11,26 +11,24 @@ log = getLogger()
 
 
 class ProfileApi(ApiRoute):
-    """Gist detail view.
-    ---
-    get:
-      parameters:
-      - in: path
-        schema: DemoParameter
-      responses:
-        200:
-          content:
-            application/json:
-              schema: DemoSchema
-        201:
-          content:
-            application/json:
-              schema: DemoSchema
-    """
-
     decorators = [jwt_required()]
 
     def get(self):
+        """User Profile
+        ---
+        schema:
+            responses:
+                200:
+                    description: Return a Profile
+                    content:
+                        application/json:
+                            schema: Base
+                404:
+                    description: The user from the current credentials does not exist
+                    content:
+                        application/json:
+                            schema: ErrorSimple
+        """
         try:
             user = User.get_from_jwt().to_mongo().to_dict()
             user.pop("password")
@@ -44,6 +42,21 @@ class ProfileConfigApi(ApiRoute):
     decorators = [jwt_required()]
 
     def get(self):
+        """User's Configs
+        ---
+        schema:
+            responses:
+                200:
+                    description: Return all configs created by the logged in user
+                    content:
+                        application/json:
+                            schema: Base
+                404:
+                    description: Missing config
+                    content:
+                        application/json:
+                            schema: ErrorSimple
+        """
         try:
             return format_response(
                 {"configurations": Config.objects.filter(creator=User.get_from_jwt())}
@@ -57,12 +70,43 @@ class ActiveConfigApi(ApiRoute):
     decorators = [jwt_required()]
 
     def get(self):
+        """User's Active Config
+        ---
+        schema:
+            responses:
+                200:
+                    description: Return the logged in user's active config
+                    content:
+                        application/json:
+                            schema: Base
+                404:
+                    description: Missing config
+                    content:
+                        application/json:
+                            schema: ErrorSimple
+        """
         try:
             return format_response({"configuration": User.get_from_jwt().config})
-        except:
+        except Exception as e:
+            log.error(e)
             return format_error("The requested configuration does not exist.", 404)
 
     def post(self):
+        """Set the named config to be the logged in user's active config
+        ---
+        schema:
+            responses:
+                200:
+                    description: Return a Profile
+                    content:
+                        application/json:
+                            schema: Base
+                404:
+                    description: Missing config
+                    content:
+                        application/json:
+                            schema: ErrorSimple
+        """
         try:
             user = User.get_from_jwt()
             user.config = Config.objects.get(
@@ -71,5 +115,5 @@ class ActiveConfigApi(ApiRoute):
             user.save()
             return format_response()
         except Exception as e:
-            print(e)
+            log.error(e)
             return format_error("The requested configuration does not exist.", 404)
