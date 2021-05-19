@@ -5,11 +5,29 @@ from flask_restful import Resource
 from ..models.configuration import Config
 from ..models.user import User
 from ..utils.responses import format_response, format_error
+from .base import ApiRoute
 
 log = getLogger()
 
 
-class ProfileApi(Resource):
+class ProfileApi(ApiRoute):
+    """Gist detail view.
+    ---
+    get:
+      parameters:
+      - in: path
+        schema: DemoParameter
+      responses:
+        200:
+          content:
+            application/json:
+              schema: DemoSchema
+        201:
+          content:
+            application/json:
+              schema: DemoSchema
+    """
+
     decorators = [jwt_required()]
 
     def get(self):
@@ -22,7 +40,7 @@ class ProfileApi(Resource):
             return format_error("You do not exist. Contemplate.", 404)
 
 
-class ProfileConfigApi(Resource):
+class ProfileConfigApi(ApiRoute):
     decorators = [jwt_required()]
 
     def get(self):
@@ -35,7 +53,7 @@ class ProfileConfigApi(Resource):
             return format_error("The requested configuration does not exist.", 404)
 
 
-class ActiveConfigApi(Resource):
+class ActiveConfigApi(ApiRoute):
     decorators = [jwt_required()]
 
     def get(self):

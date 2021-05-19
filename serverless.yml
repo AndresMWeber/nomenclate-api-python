@@ -36,12 +36,10 @@ provider:
     REGION: ${self:provider.region}
     STAGE: ${env:STAGE, self:provider.stage}
     DOMAIN: nom-${self:custom.subdomain}.andresmweber.com
-    AW_SLACK_URL: ${ssm:/aw/slack/octoprint~true}
     AW_BUCKET: ${self:custom.imageBucket}
     AW_BRANCH: ${self:custom.serverlessBranch, self:custom.gitBranch}
     GIT_BRANCH: ${self:custom.gitBranch}
     COVERALLS_SERVICE_NAME: serverless
-    COVERALLS_REPO_TOKEN: ${ssm:/aw/octo-listener/coveralls~true}
     COVERALLS_GIT_BRANCH: ${self:custom.serverlessBranch, self:custom.gitBranch}
 
 custom:

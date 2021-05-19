@@ -1,0 +1,180 @@
+{
+    "components": {
+        "schemas": {
+            "ConfigurationPost": {
+                "properties": {
+                    "data": {
+                        "type": "object"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "data",
+                    "name"
+                ],
+                "type": "object"
+            },
+            "ConfigurationPut": {
+                "properties": {
+                    "_id": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "object"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "_id",
+                    "data",
+                    "name"
+                ],
+                "type": "object"
+            },
+            "Email": {
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email"
+                ],
+                "type": "object"
+            },
+            "EmailPassword": {
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "type": "object"
+            },
+            "ErrorComplex": {
+                "properties": {
+                    "error": {
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "error"
+                ],
+                "type": "object"
+            },
+            "ErrorSimple": {
+                "properties": {
+                    "error": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "error"
+                ],
+                "type": "object"
+            },
+            "NameEmailPassword": {
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "name",
+                    "password"
+                ],
+                "type": "object"
+            }
+        }
+    },
+    "info": {
+        "contact": {
+            "email": [
+                "Andres Weber <andresmweber@gmail.com>"
+            ]
+        },
+        "description": "Nomenclate Api",
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "title": "Nomenclate Api",
+        "version": "0.1.0"
+    },
+    "openapi": "3.0.2",
+    "paths": {
+        "/auth/deactivate": {
+            "post": {}
+        },
+        "/auth/exists": {
+            "post": {}
+        },
+        "/auth/login": {
+            "post": {}
+        },
+        "/auth/reactivate": {
+            "post": {}
+        },
+        "/auth/signup": {
+            "post": {}
+        },
+        "/config": {
+            "delete": {},
+            "post": {},
+            "put": {}
+        },
+        "/config/{name}": {
+            "get": {}
+        },
+        "/me": {
+            "get": {}
+        },
+        "/me/config": {
+            "get": {},
+            "post": {}
+        },
+        "/me/configs": {
+            "get": {}
+        },
+        "/nomenclate": {
+            "delete": {},
+            "post": {},
+            "put": {}
+        }
+    },
+    "servers": [
+        {
+            "description": "Production Server",
+            "url": "https://nom-api.andresmweber.com/"
+        }
+    ],
+    "tags": [
+        "Poetry",
+        "Virtual Environments",
+        "Tutorial",
+        "Packages",
+        "Packaging",
+        "nomenclate",
+        "naming",
+        "automatic",
+        "generator",
+        "convention"
+    ]
+}

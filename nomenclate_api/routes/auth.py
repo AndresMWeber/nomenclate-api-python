@@ -1,27 +1,14 @@
 import datetime
 from logging import getLogger
 from mongoengine.errors import NotUniqueError, ValidationError
-from marshmallow import fields
 from flask import request
-from flask_restful import Resource
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from ..models.user import User
-from ..utils.responses import format_response, format_error
-from .base import ApiRoute, validate_schema, BaseSchema
+from nomenclate_api.models.user import User
+from nomenclate_api.utils.responses import format_response, format_error
+from nomenclate_api.api_spec import NameEmailPasswordSchema, EmailSchema, EmailPasswordSchema
+from .base import ApiRoute, validate_schema
 
 log = getLogger()
-
-
-class EmailSchema(BaseSchema):
-    email = fields.String(required=True)
-
-
-class EmailPasswordSchema(EmailSchema):
-    password = fields.String(required=True)
-
-
-class NameEmailPasswordSchema(EmailPasswordSchema):
-    name = fields.String(required=True)
 
 
 class SignupApi(ApiRoute):
@@ -38,7 +25,7 @@ class SignupApi(ApiRoute):
             user = User.objects.get(email=body.get("email"))
             return format_error("That email address is already in use.", 409)
         except ValidationError as e:
-            return format_error(str(e), 400)
+            return format_error(e, 400)
         except Exception as e:
             log.error(f"Unhandled error creating user: {str(e)}")
             return format_error("There was a problem creating the user.", 400)
