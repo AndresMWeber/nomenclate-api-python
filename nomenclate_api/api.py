@@ -61,7 +61,6 @@ def create_app():
 
 port = int(getenv("PORT") or 8080)
 app = create_app()
-spec = create_spec(app, routes)
 
 if __name__ == "__main__":
     app.run(threaded=True, host="0.0.0.0", port=port)

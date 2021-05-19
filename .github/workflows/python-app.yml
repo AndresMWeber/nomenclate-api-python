@@ -5,11 +5,11 @@ name: CI/CD
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
-    - 'README.md'
+      - "README.md"
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   ci:
@@ -39,3 +39,28 @@ jobs:
         run: poetry install
       - name: Run test suite
         run: poetry run poe test
+      - name: Install coverage
+        run: pip3 install -U coverage
+      - name: Convert to xml coverage file
+        run: coverage xml
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: codecov
+          path: coverage.xml
+  upload-coverage:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Download artifact"
+        uses: actions/download-artifact@v2
+        with:
+          name: codecov
+      - name: Display structure of downloaded files
+        run: ls -R -all
+      - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true

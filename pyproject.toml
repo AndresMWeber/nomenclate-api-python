@@ -39,6 +39,7 @@ toml = "^0.10.2"
 apispec = "^4.4.1"
 apispec-webframeworks = "^0.5.2"
 black = "^21.5b1"
+coverage = "^5.5"
 jsonschema = "^3.2.0"
 poethepoet = "^0.10.0"
 pytest = "^5.2"
@@ -70,7 +71,7 @@ freeze = {shell = "poetry export -f requirements.txt > requirements.txt --withou
 # python script based task 
 mksandwich = {script = "my_package.sandwich:build"}
 # simple command based task
-test = "pytest --cov tests/ --envfile ./.env.test"
+test = "coverage run -m pytest --envfile ./.env.test"
 
 [tool.black]
 include = '\.pyi?$'

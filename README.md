@@ -11,6 +11,10 @@
     <a href="https://github.com/AndresMWeber/nomenclate-api-python/issues">
         <img alt="Issues" src="https://img.shields.io/github/issues/andresmweber/nomenclate-api-python.svg" />
     </a>
+    <br>
+    <a href="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/readme-api-sync.yml">
+        <img alt="Issues" src="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/readme-api-sync.yml/badge.svg" />
+    </a>
     <a href="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/python-app.yml">
         <img alt="Issues" src="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/python-app.yml/badge.svg" />
     </a>
@@ -20,6 +24,12 @@
     </a>
     <a href=".">
         <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/andresmweber/nomenclate-api-python" />
+    </a>
+    <a href="https://codecov.io/gh/AndresMWeber/nomenclate-api-python">
+        <img alt="CodeCoverage" src="https://codecov.io/gh/AndresMWeber/nomenclate-api-python/branch/main/graph/badge.svg?token=4EC7Z5IKKB"/>
+    </a>
+    <a href="https://nomenclate.readme.io/">
+        <img alt="readme" src="https://img.shields.io/badge/read-me-blue">
     </a>
 </div>
 
@@ -42,10 +52,13 @@ An API using the Nomenclate package to automate and generate strings based on ar
 ## 📝 Table of Contents
 
 - [Installation](#installation)
-- [Deployment](#deployment)
-- [Built Using](#tech)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgement)
+    - [Prerequsites](#prerequsites)
+    - [Install steps](#install-steps)
+  - [🚀 Deployment <a name = "deployment"></a>](#-deployment-)
+    - [Modifications to `serverless.yml`](#modifications-to-serverlessyml)
+    - [Deploying to AWS](#deploying-to-aws)
+  - [⛏️ Tech Stack <a name = "tech"></a>](#️-tech-stack-)
+  - [✍️ Authors <a name = "authors"></a>](#️-authors-)
 
 # Installation
 
