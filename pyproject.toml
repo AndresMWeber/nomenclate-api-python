@@ -55,9 +55,9 @@ requires = ["poetry-core>=1.0.0"]
 run = "wsgi:main"
 
 [tool.poetry.urls]
+issues = "https://github.com/andresmweber/nomenclate-api-python/issues"
 server = "https://nom-api.andresmweber.com/"
 vcs = "https://github.com/andresmweber/nomenclate-api-python"
-issues = "https://github.com/andresmweber/nomenclate-api-python/issues"
 
 [tool.poe.tasks]
 deploy = {shell = "sls deploy"}
@@ -65,6 +65,7 @@ deploy-domain = {shell = "SLS_DEBUG=* sls create_domain"}
 dev = {shell = "sls wsgi serve"}
 env = {shell = "sls export-env"}
 # shell script based task 
+docs = "python nomenclate_api/api_spec.py"
 freeze = {shell = "poetry export -f requirements.txt > requirements.txt --without-hashes"}
 # python script based task 
 mksandwich = {script = "my_package.sandwich:build"}

@@ -103,4 +103,17 @@ def create_spec(current_app, routes) -> APISpec:
 
     with open(f"docs/spec/yaml/nomenclate_{version}.yaml", "w") as f:
         f.write(spec.to_yaml())
+
+    with open(f"docs/spec/json/nomenclate.json", "w") as f:
+        json.dump(spec.to_dict(), f, sort_keys=True, indent=4)
+
+    with open(f"docs/spec/yaml/nomenclate.yaml", "w") as f:
+        f.write(spec.to_yaml())
+
     return spec
+
+
+if __name__ == "__main__":
+    from nomenclate_api.api import create_app, routes
+
+    create_spec(create_app(), routes)
