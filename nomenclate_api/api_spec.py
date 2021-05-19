@@ -1,15 +1,25 @@
 import re
 import json
-from toml import load as toml_load
 from flask import current_app
-from marshmallow import Schema, fields
+from marshmallow import Schema
 from apispec import APISpec
 from apispec.exceptions import APISpecError
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
-from nomenclate_api.utils.general import classproperty
+from nomenclate_api.utils.general import get_project_attribute
 from flask.views import MethodView
 from apispec import yaml_utils
+from .schemas import (
+    BaseSchema,
+    ErrorSimpleSchema,
+    ErrorComplexSchema,
+    ConfigurationPostSchema,
+    ConfigurationPutSchema,
+    EmailSchema,
+    EmailPasswordSchema,
+    NameEmailPasswordSchema,
+    LoginResponseSchema,
+)
 
 
 class FlaskRestfulPlugin(FlaskPlugin):
@@ -45,48 +55,9 @@ class FlaskRestfulPlugin(FlaskPlugin):
         return self.flaskpath2openapi(rule.rule)
 
 
-class BaseSchema(Schema):
-    @classproperty
-    def simple_name(cls: Schema) -> str:
-        return cls.__name__.replace("Schema", "")
-
-
-class LoginResponseSchema(BaseSchema):
-    token = fields.String(required=True)
-
-
-class ErrorSimpleSchema(BaseSchema):
-    error = fields.String(required=True)
-
-
-class ErrorComplexSchema(BaseSchema):
-    error = fields.Dict(required=True)
-
-
-class ConfigurationPostSchema(BaseSchema):
-    data = fields.Dict(required=True)
-    name = fields.String(required=True)
-
-
-class ConfigurationPutSchema(ConfigurationPostSchema):
-    _id = fields.String(required=True)
-
-
-class EmailSchema(BaseSchema):
-    email = fields.String(required=True)
-
-
-class EmailPasswordSchema(EmailSchema):
-    password = fields.String(required=True)
-
-
-class NameEmailPasswordSchema(EmailPasswordSchema):
-    name = fields.String(required=True)
-
-
 def create_spec(current_app, routes) -> APISpec:
-    pyproject_data = toml_load("pyproject.toml")["tool"]["poetry"]
-    version = pyproject_data["version"]
+    project_data = get_project_attribute("tool", "poetry")
+    version = project_data["version"]
     spec = APISpec(
         title=current_app.name,
         version=version,
@@ -94,10 +65,10 @@ def create_spec(current_app, routes) -> APISpec:
         info=dict(
             description=current_app.name,
             version=version,
-            contact=dict(email=re.search("<(.*)>", pyproject_data["authors"][0])[1]),
+            contact=dict(email=re.search("<(.*)>", project_data["authors"][0])[1]),
             license=dict(name="Apache 2.0", url="http://www.apache.org/licenses/LICENSE-2.0.html"),
         ),
-        servers=[dict(description="Production Server", url=pyproject_data["urls"]["server"])],
+        servers=[dict(description="Production Server", url=project_data["urls"]["server"])],
         tags=[],
         plugins=[FlaskRestfulPlugin(), MarshmallowPlugin()],
     )

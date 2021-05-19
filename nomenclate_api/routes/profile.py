@@ -1,10 +1,9 @@
 from logging import getLogger
 from flask import request
 from flask_jwt_extended import jwt_required
-from flask_restful import Resource
-from ..models.configuration import Config
-from ..models.user import User
-from ..utils.responses import format_response, format_error
+from nomenclate_api.models.configuration import Config
+from nomenclate_api.models.user import User
+from nomenclate_api.utils.responses import format_response, format_error
 from .base import ApiRoute
 
 log = getLogger()

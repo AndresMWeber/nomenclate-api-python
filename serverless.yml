@@ -68,15 +68,15 @@ functions:
       - http: 'ANY /{proxy+}'
     environment:
       MONGO_URI: ${env:MONGO_URI}
-  hello:
-    handler: nomenclate_api.handlers.hello.handler
+  version:
+    handler: nomenclate_api.handlers.version.handler
     events:
       - http:
-          path: hello
+          path: version
           method: get
-  goodbye:
-    handler: nomenclate_api.handlers.goodbye.handler
+  documentation:
+    handler: nomenclate_api.handlers.documentation.handler
     events:
       - http:
-          path: goodbye
+          path: /
           method: get

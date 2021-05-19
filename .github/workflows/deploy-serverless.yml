@@ -1,0 +1,48 @@
+name: Deploy main branch
+
+on:
+  workflow_run:
+    branches:
+      - master
+      - main
+    workflows: ["CI/CD"]
+    types:
+      - completed
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+        python-version: [3.8]
+        mongodb-version: [4.4]
+        poetry-version: [1.1.6]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.4.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
+        continue-on-error: true
+      - name: Run image
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - name: Install dependencies
+        run: poetry install
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Serverless Framework
+        run: npm install -g serverless
+      - name: Serverless AWS authentication
+        run: sls config credentials --profile aw --provider aws --key ${{ secrets.AWS_KEY }} --secret ${{ secrets.AWS_SECRET }}
+      - name: Install NPM dependencies
+        run: npm ci
+      - name: Deploy Lambda functions
+        run: sls deploy

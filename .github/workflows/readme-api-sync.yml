@@ -1,9 +1,12 @@
 name: Sync OAS to ReadMe
 on:
-  push:
+  workflow_run:
+    workflows: ["CI/CD"]
     branches:
       - main
       - master
+    types:
+      - completed
 jobs:
   build-docs:
     runs-on: ubuntu-latest

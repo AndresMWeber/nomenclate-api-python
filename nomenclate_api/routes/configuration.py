@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required
 from nomenclate_api.models.user import User
 from nomenclate_api.models.configuration import Config
 from nomenclate_api.utils.responses import format_response, format_error
-from nomenclate_api.api_spec import ConfigurationPostSchema, ConfigurationPutSchema
+from nomenclate_api.schemas import ConfigurationPostSchema, ConfigurationPutSchema
 from .base import ApiRoute, validate_schema
 
 log = getLogger()

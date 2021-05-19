@@ -13,10 +13,13 @@
     </a>
     <br>
     <a href="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/readme-api-sync.yml">
-        <img alt="Issues" src="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/readme-api-sync.yml/badge.svg" />
+        <img alt="Documentation CD" src="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/readme-api-sync.yml/badge.svg" />
     </a>
     <a href="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/python-app.yml">
-        <img alt="Issues" src="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/python-app.yml/badge.svg" />
+        <img alt="CI" src="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/python-app.yml/badge.svg" />
+    </a>
+    <a href="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/deploy-serverless.yml">
+        <img alt="CD" src="https://github.com/AndresMWeber/nomenclate-api-python/actions/workflows/deploy-serverless.yml/badge.svg" />
     </a>
     <br />
     <a href="https://github.com/AndresMWeber/nomenclate-api-python/blob/master/LICENSE">

@@ -5,7 +5,7 @@ from flask import request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from nomenclate_api.models.user import User
 from nomenclate_api.utils.responses import format_response, format_error
-from nomenclate_api.api_spec import NameEmailPasswordSchema, EmailSchema, EmailPasswordSchema
+from nomenclate_api.schemas import NameEmailPasswordSchema, EmailSchema, EmailPasswordSchema
 from .base import ApiRoute, validate_schema
 
 log = getLogger()

@@ -1,5 +1,5 @@
 from os import getenv
-from typing import Tuple, List
+from typing import Tuple
 from dotenv import load_dotenv
 from datetime import timedelta
 from flask import Flask
@@ -8,7 +8,6 @@ from flask_bcrypt import Bcrypt
 from flask_restful import Api
 from .utils.responses import JSONEncoder
 from .models.user import login_manager
-from .api_spec import create_spec
 from .routes.base import ApiRoute
 from .routes.auth import SignupApi, LoginApi, DeactivateApi, ReactivateApi, UserExistsApi
 from .routes.profile import ActiveConfigApi, ProfileConfigApi, ProfileApi
@@ -34,8 +33,10 @@ def create_app():
     load_dotenv()
     app = Flask(__name__.replace(".api", "").replace("_", " ").title())
     Bcrypt(app)
-    JWTManager(app)
+    jwt = JWTManager(app)
     api = Api(app)
+
+    jwt._set_error_handler_callbacks(app)
 
     mongo_uri = getenv("MONGO_URI")
     if not mongo_uri or mongo_uri == "undefined":

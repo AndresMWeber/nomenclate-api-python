@@ -71,7 +71,7 @@ freeze = {shell = "poetry export -f requirements.txt > requirements.txt --withou
 # python script based task 
 mksandwich = {script = "my_package.sandwich:build"}
 # simple command based task
-test = "coverage run -m pytest --envfile ./.env.test"
+test = "coverage run -m pytest --cov-report xml --envfile ./.env.test"
 
 [tool.black]
 include = '\.pyi?$'
