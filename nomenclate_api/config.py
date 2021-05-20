@@ -1,8 +1,9 @@
+import logging
 from os import getenv
 from datetime import timedelta
-from logging import getLogger
 
-LOG = getLogger()
+logging.basicConfig(level=logging.DEBUG)
+LOG = logging.getLogger("nomenclate-api")
 ACCESS_EXPIRES = timedelta(days=7)
 REDIS_HOST = getenv("REDIS_HOST", "localhost")
 REDIS_PASS = getenv("REDIS_PASS", "")

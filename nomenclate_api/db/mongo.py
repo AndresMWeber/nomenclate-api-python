@@ -1,7 +1,8 @@
-from re import I
+import logging
 from flask_mongoengine import MongoEngine
 from nomenclate_api.config import MONGO_URI
 
+LOG = logging.getLogger("nomenclate-api:mongo")
 db = MongoEngine()
 
 
@@ -14,5 +15,5 @@ def init_mongo(app):
     db.init_app(app)
 
     with app.app_context():
-        print(f"Connecting to DB: {uri}")
-        print(f"Connection state: {db.connection}")
+        LOG.info(f"Connecting to DB: {uri}")
+        LOG.info(f"Connection state: {db.connection}")

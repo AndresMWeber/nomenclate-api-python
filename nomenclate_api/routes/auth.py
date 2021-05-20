@@ -4,7 +4,7 @@ from flask import request
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt, get_jwt_identity
 from nomenclate_api.config import ACCESS_EXPIRES
 from nomenclate_api.models.user import User
-from nomenclate_api.db.blacklist import jwt_redis_blocklist
+from nomenclate_api.db.blacklist import jwt_redis_blacklist
 from nomenclate_api.utils.responses import format_response, format_error
 from nomenclate_api.schemas import NameEmailPasswordSchema, EmailSchema, EmailPasswordSchema
 from .base import ApiRoute, validate_schema
@@ -150,7 +150,7 @@ class LogoutApi(ApiRoute):
         if not user.active:
             return format_error("The specified user account is not active.", 401)
         jti = get_jwt()["jti"]
-        jwt_redis_blocklist.set(jti, "", ex=ACCESS_EXPIRES)
+        jwt_redis_blacklist.set(jti, "", ex=ACCESS_EXPIRES)
         return format_response("Access token revoked", 200)
 
 
