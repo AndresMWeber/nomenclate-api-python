@@ -34,6 +34,7 @@ pymongo = "^3.11.3"
 python = "^3.6.2"
 python-dotenv = "^0.17.0"
 toml = "^0.10.2"
+redis = "^3.5.3"
 
 [tool.poetry.dev-dependencies]
 apispec = "^4.4.1"

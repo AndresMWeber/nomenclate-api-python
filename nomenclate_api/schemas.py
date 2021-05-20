@@ -8,8 +8,19 @@ class BaseSchema(Schema):
         return cls.__name__.replace("Schema", "")
 
 
+class ConfigResponseSchema(BaseSchema):
+    name = fields.String(required=True)
+    data = fields.String(required=True)
+    creator = fields.Dict(required=True)
+    meta = fields.Dict(required=True)
+
+
 class LoginResponseSchema(BaseSchema):
     token = fields.String(required=True)
+
+
+class SignupResponseSchema(BaseSchema):
+    id = fields.String(required=True)
 
 
 class ErrorSimpleSchema(BaseSchema):
@@ -39,3 +50,22 @@ class EmailPasswordSchema(EmailSchema):
 
 class NameEmailPasswordSchema(EmailPasswordSchema):
     name = fields.String(required=True)
+
+
+class ExistsResponseSchema(EmailPasswordSchema):
+    exists = fields.Boolean(required=True)
+
+
+SCHEMAS = [
+    BaseSchema,
+    LoginResponseSchema,
+    SignupResponseSchema,
+    ErrorSimpleSchema,
+    ErrorComplexSchema,
+    ConfigurationPostSchema,
+    ConfigurationPutSchema,
+    EmailSchema,
+    EmailPasswordSchema,
+    NameEmailPasswordSchema,
+    ExistsResponseSchema,
+]

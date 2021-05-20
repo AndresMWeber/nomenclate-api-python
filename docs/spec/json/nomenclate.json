@@ -87,6 +87,25 @@
                 ],
                 "type": "object"
             },
+            "ExistsResponse": {
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "exists": {
+                        "type": "boolean"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "email",
+                    "exists",
+                    "password"
+                ],
+                "type": "object"
+            },
             "LoginResponse": {
                 "properties": {
                     "token": {
@@ -116,6 +135,24 @@
                     "password"
                 ],
                 "type": "object"
+            },
+            "SignupResponse": {
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id"
+                ],
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "JWTAuth": {
+                "bearerFormat": "JWT",
+                "scheme": "bearer",
+                "type": "http"
             }
         }
     },
@@ -145,12 +182,62 @@
                     "409": {
                         "description": "User already deactivated."
                     }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/exists": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Email"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExistsResponse"
+                                }
+                            }
+                        },
+                        "description": "The requested user account exists."
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ExistsResponse"
+                                }
+                            }
+                        },
+                        "description": "The requested user account does not exist."
+                    }
                 }
             }
         },
-        "/auth/exists": {},
         "/auth/login": {
             "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailPassword"
+                            }
+                        }
+                    },
+                    "required": true
+                },
                 "responses": {
                     "201": {
                         "content": {
@@ -185,8 +272,45 @@
                 }
             }
         },
+        "/auth/logout": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "Successful logout"
+                    },
+                    "400": {
+                        "description": "User login token expired."
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorSimple"
+                                }
+                            }
+                        },
+                        "description": "The specified user account is not active."
+                    }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
+            }
+        },
         "/auth/reactivate": {
             "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EmailPassword"
+                            }
+                        }
+                    },
+                    "required": true
+                },
                 "responses": {
                     "200": {
                         "description": "User already deactivated."
@@ -200,7 +324,52 @@
                 }
             }
         },
-        "/auth/signup": {},
+        "/auth/signup": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/NameEmailPassword"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SignupResponse"
+                                }
+                            }
+                        },
+                        "description": "User created"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorSimple"
+                                }
+                            }
+                        },
+                        "description": "There was a problem creating the user."
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorSimple"
+                                }
+                            }
+                        },
+                        "description": "That email address is already in use."
+                    }
+                }
+            }
+        },
         "/config": {
             "delete": {
                 "responses": {

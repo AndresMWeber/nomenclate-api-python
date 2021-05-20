@@ -1,6 +1,6 @@
 from flask import request
 from flask_jwt_extended import get_jwt_identity
-from nomenclate_api.db.config import db
+from nomenclate_api.db.mongo import db
 
 
 class Config(db.Document):

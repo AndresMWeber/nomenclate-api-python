@@ -2,7 +2,7 @@ import os
 import json
 import unittest
 from nomenclate_api.api import app
-from nomenclate_api.db.config import db
+from nomenclate_api.db.mongo import db
 
 
 class DBDocTest(unittest.TestCase):

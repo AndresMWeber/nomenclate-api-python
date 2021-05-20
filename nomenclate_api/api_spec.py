@@ -1,63 +1,18 @@
 import re
 import json
-from flask import current_app
+from flask_jwt_extended.view_decorators import jwt_required
 from marshmallow import Schema
 from apispec import APISpec
-from apispec.exceptions import APISpecError
 from apispec.ext.marshmallow import MarshmallowPlugin
-from apispec_webframeworks.flask import FlaskPlugin
 from nomenclate_api.utils.general import get_project_attribute
-from flask.views import MethodView
-from apispec import yaml_utils
-from .schemas import (
-    BaseSchema,
-    ErrorSimpleSchema,
-    ErrorComplexSchema,
-    ConfigurationPostSchema,
-    ConfigurationPutSchema,
-    EmailSchema,
-    EmailPasswordSchema,
-    NameEmailPasswordSchema,
-    LoginResponseSchema,
-)
-
-
-class FlaskRestfulPlugin(FlaskPlugin):
-    @staticmethod
-    def _rule_for_view(view, app):
-        if app is None:
-            app = current_app
-
-        view_funcs = app.view_functions
-        endpoint = None
-        for ept, view_func in view_funcs.items():
-            if view_func.__name__ == view.__name__:
-                endpoint = ept
-        if not endpoint:
-            raise APISpecError(f"Could not find endpoint for view {view}")
-
-        return app.url_map._rules_by_endpoint[endpoint][0]
-
-    def path_helper(self, operations, *, view, app=None, **kwargs):
-        """Path helper that allows passing a Flask view function."""
-        rule = self._rule_for_view(view, app=app)
-        operations.update(yaml_utils.load_operations_from_docstring(view.__doc__))
-        if hasattr(view, "view_class") and issubclass(view.view_class, MethodView):
-            for method in view.methods:
-                if method in rule.methods:
-                    method_name = method.lower()
-                    method = getattr(view.view_class, method_name)
-                    if method.__doc__:
-                        docs = yaml_utils.load_yaml_from_docstring(method.__doc__)
-                        operations[method_name] = docs[
-                            "schema"  # Access custom static root to allow yaml parsing.
-                        ]
-        return self.flaskpath2openapi(rule.rule)
+from nomenclate_api.openapi_plugin import FlaskRestfulPlugin
+from nomenclate_api.schemas import SCHEMAS
 
 
 def create_spec(current_app, routes) -> APISpec:
     project_data = get_project_attribute("tool", "poetry")
     version = project_data["version"]
+
     spec = APISpec(
         title=current_app.name,
         version=version,
@@ -73,22 +28,23 @@ def create_spec(current_app, routes) -> APISpec:
         plugins=[FlaskRestfulPlugin(), MarshmallowPlugin()],
     )
 
+    jwt_scheme = {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}
+    spec.components.security_scheme("JWTAuth", jwt_scheme)
+
     def register_schema(schema: Schema):
         spec.components.schema(schema.simple_name, schema=schema)
 
-    register_schema(BaseSchema)
-    register_schema(ErrorSimpleSchema)
-    register_schema(ErrorComplexSchema)
-    register_schema(ConfigurationPostSchema)
-    register_schema(ConfigurationPutSchema)
-    register_schema(EmailSchema)
-    register_schema(EmailPasswordSchema)
-    register_schema(NameEmailPasswordSchema)
-    register_schema(LoginResponseSchema)
+    [register_schema(schema) for schema in SCHEMAS]
 
     with current_app.test_request_context():
         for route, _ in routes:
             spec.path(view=route.as_view(route.name))
+
+    write_doc_files(spec, version)
+    return spec
+
+
+def write_doc_files(spec, version):
 
     with open(f"docs/spec/json/nomenclate_{version}.json", "w") as f:
         json.dump(spec.to_dict(), f, sort_keys=True, indent=4)
@@ -102,10 +58,8 @@ def create_spec(current_app, routes) -> APISpec:
     with open(f"docs/spec/yaml/nomenclate.yaml", "w") as f:
         f.write(spec.to_yaml())
 
-    return spec
-
 
 if __name__ == "__main__":
-    from nomenclate_api.api import create_app, routes
+    from nomenclate_api.api import create_app, ROUTES
 
-    create_spec(create_app(), routes)
+    create_spec(create_app(), ROUTES)

@@ -1,12 +1,10 @@
-from logging import getLogger
+from re import I
 from flask import request
 from flask_jwt_extended import jwt_required
 from nomenclate_api.models.configuration import Config
 from nomenclate_api.models.user import User
 from nomenclate_api.utils.responses import format_response, format_error
 from .base import ApiRoute
-
-log = getLogger()
 
 
 class ProfileApi(ApiRoute):
@@ -16,6 +14,8 @@ class ProfileApi(ApiRoute):
         """User Profile
         ---
         schema:
+            security:
+                - JWTAuth: []
             responses:
                 200:
                     description: Return a Profile
@@ -33,7 +33,7 @@ class ProfileApi(ApiRoute):
             user.pop("password")
             return format_response(user)
         except Exception as e:
-            log.error(e)
+            self.log_error(e)
             return format_error("You do not exist. Contemplate.", 404)
 
 
@@ -44,6 +44,8 @@ class ProfileConfigApi(ApiRoute):
         """User's Configs
         ---
         schema:
+            security:
+                - JWTAuth: []
             responses:
                 200:
                     description: Return all configs created by the logged in user
@@ -61,7 +63,7 @@ class ProfileConfigApi(ApiRoute):
                 {"configurations": Config.objects.filter(creator=User.get_from_jwt())}
             )
         except Exception as e:
-            log.error(e)
+            self.log_error(e)
             return format_error("The requested configuration does not exist.", 404)
 
 
@@ -72,6 +74,8 @@ class ActiveConfigApi(ApiRoute):
         """User's Active Config
         ---
         schema:
+            security:
+                - JWTAuth: []
             responses:
                 200:
                     description: Return the logged in user's active config
@@ -87,13 +91,15 @@ class ActiveConfigApi(ApiRoute):
         try:
             return format_response({"configuration": User.get_from_jwt().config})
         except Exception as e:
-            log.error(e)
+            self.log_error(e)
             return format_error("The requested configuration does not exist.", 404)
 
     def post(self):
         """Set the named config to be the logged in user's active config
         ---
         schema:
+            security:
+                - JWTAuth: []
             responses:
                 200:
                     description: Return a Profile
@@ -114,5 +120,5 @@ class ActiveConfigApi(ApiRoute):
             user.save()
             return format_response()
         except Exception as e:
-            log.error(e)
+            self.log_error(e)
             return format_error("The requested configuration does not exist.", 404)

@@ -11,6 +11,8 @@ class NomenclateApi(ApiRoute):
         """Create Nomenclate from Active Config + Payload
         ---
         schema:
+            security:
+                - JWTAuth: []
             responses:
                 201:
                     description: Return a nomenclate object
@@ -35,6 +37,8 @@ class NomenclateApi(ApiRoute):
         """Update Nomenclate from Active Config + Payload
         ---
         schema:
+            security:
+                - JWTAuth: []
             responses:
                 204:
                     description: Sucessfully updated the nomenclate object
@@ -56,6 +60,8 @@ class NomenclateApi(ApiRoute):
         """Update Nomenclate from Active Config + Payload
         ---
         schema:
+            security:
+                - JWTAuth: []
             responses:
                 204:
                     description: Sucessfully deleted the nomenclate object

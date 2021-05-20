@@ -1,22 +1,33 @@
 from os import getenv
 from typing import Tuple
 from dotenv import load_dotenv
-from datetime import timedelta
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
 from flask_restful import Api
+from .config import ACCESS_EXPIRES
 from .utils.responses import JSONEncoder
 from .models.user import login_manager
 from .routes.base import ApiRoute
-from .routes.auth import SignupApi, LoginApi, DeactivateApi, ReactivateApi, UserExistsApi
+from .routes.auth import (
+    SignupApi,
+    LoginApi,
+    LogoutApi,
+    DeactivateApi,
+    ReactivateApi,
+    UserExistsApi,
+)
 from .routes.profile import ActiveConfigApi, ProfileConfigApi, ProfileApi
-from .routes.configuration import ConfigApi, ConfigGetApi
+from .routes.configuration import ConfigApi, ConfigByNameApi
 from .routes.nomenclate import NomenclateApi
+from .db.mongo import init_mongo
+from .db.blacklist import init_blacklist
 
-routes: Tuple[ApiRoute, str] = [
+
+ROUTES: Tuple[ApiRoute, str] = [
     (SignupApi, "/auth/signup"),
     (LoginApi, "/auth/login"),
+    (LogoutApi, "/auth/logout"),
     (UserExistsApi, "/auth/exists"),
     (DeactivateApi, "/auth/deactivate"),
     (ReactivateApi, "/auth/reactivate"),
@@ -24,38 +35,28 @@ routes: Tuple[ApiRoute, str] = [
     (ProfileConfigApi, "/me/configs"),
     (ActiveConfigApi, "/me/config"),
     (ConfigApi, "/config"),
-    (ConfigGetApi, "/config/<string:name>"),
+    (ConfigByNameApi, "/config/<string:name>"),
     (NomenclateApi, "/nomenclate"),
 ]
 
 
 def create_app():
     load_dotenv()
+
     app = Flask(__name__.replace(".api", "").replace("_", " ").title())
     Bcrypt(app)
-    jwt = JWTManager(app)
     api = Api(app)
+    jwt = JWTManager(app)
 
-    jwt._set_error_handler_callbacks(app)
-
-    mongo_uri = getenv("MONGO_URI")
-    if not mongo_uri or mongo_uri == "undefined":
-        mongo_uri = "mongodb://localhost:27017/nomenclate-api"
-    app.config["MONGODB_SETTINGS"] = {"host": mongo_uri}
-    app.config["JWT_SECRET_KEY"] = getenv("SECRET") or "insecure"
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
     app.json_encoder = JSONEncoder
+    app.config["JWT_SECRET_KEY"] = getenv("SECRET") or "insecure"
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 
-    from nomenclate_api.db.config import db
-
-    db.init_app(app)
+    init_mongo(app)
+    init_blacklist(app, jwt)
     login_manager.init_app(app)
 
-    [api.add_resource(route, path) for route, path in routes]
-
-    with app.app_context():
-        print(f"Connecting to DB: {mongo_uri}")
-        print(f"Connection state: {db.connection}")
+    [api.add_resource(route, path) for route, path in ROUTES]
 
     return app
 

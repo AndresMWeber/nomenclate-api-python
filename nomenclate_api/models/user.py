@@ -1,7 +1,7 @@
 from flask_login import UserMixin, LoginManager
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_jwt_extended import get_jwt_identity
-from nomenclate_api.db.config import db
+from nomenclate_api.db.mongo import db
 
 login_manager = LoginManager()
 

@@ -1,4 +1,4 @@
-from nomenclate_api.db.config import db
+from nomenclate_api.db.mongo import db
 
 
 class Organization(db.Document):
