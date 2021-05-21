@@ -113,16 +113,24 @@ class LoginApi(ApiRoute):
                     content:
                         application/json:
                             schema: ErrorSimple
+                404:
+                    description: There is no account for that email address.
+                    content:
+                        application/json:
+                            schema: ErrorSimple
         """
         body = request.get_json()
         email = body.get("email")
-        user = User.objects.get(email=email)
-        if not user.active:
-            return format_error("The specified user account is not active.", 401)
-        if not user.check_password(body.get("password")):
-            return format_error("Email or password invalid.", 400)
-        access_token = create_access_token(identity=str(user.id), expires_delta=ACCESS_EXPIRES)
-        return format_response({"token": access_token}, 200)
+        try:
+            user = User.objects.get(email=email)
+            if not user.active:
+                return format_error("The specified user account is not active.", 401)
+            if not user.check_password(body.get("password")):
+                return format_error("Email or password invalid.", 400)
+            access_token = create_access_token(identity=str(user.id), expires_delta=ACCESS_EXPIRES)
+            return format_response({"token": access_token}, 200)
+        except:
+            return format_error("There is no account for that email address.", 404)
 
 
 class LogoutApi(ApiRoute):
@@ -145,13 +153,21 @@ class LogoutApi(ApiRoute):
                     content:
                         application/json:
                             schema: ErrorSimple
+                404:
+                    description: There is no account for that email address.
+                    content:
+                        application/json:
+                            schema: ErrorSimple
         """
-        user = User.objects.get(id=get_jwt_identity())
-        if not user.active:
-            return format_error("The specified user account is not active.", 401)
-        jti = get_jwt()["jti"]
-        jwt_redis_blacklist.set(jti, "", ex=ACCESS_EXPIRES)
-        return format_response("Access token revoked", 200)
+        try:
+            user = User.objects.get(id=get_jwt_identity())
+            if not user.active:
+                return format_error("The specified user account is not active.", 401)
+            jti = get_jwt()["jti"]
+            jwt_redis_blacklist.set(jti, "", ex=ACCESS_EXPIRES)
+            return format_response("Access token revoked", 200)
+        except:
+            return format_error("There is no account for that email address.", 404)
 
 
 class DeactivateApi(ApiRoute):
@@ -170,13 +186,15 @@ class DeactivateApi(ApiRoute):
                 409:
                     description: User already deactivated.
         """
-        user = User.objects.get(id=get_jwt_identity())
-        if user:
-            if not user.active:
-                return format_error("User already deactivated.", 409)
-            user.deactivate()
-            return format_response()
-        return format_error("Logged in user not found.", status=404)
+        try:
+            user = User.objects.get(id=get_jwt_identity())
+            if user:
+                if not user.active:
+                    return format_error("User already deactivated.", 409)
+                user.deactivate()
+                return format_response()
+        except:
+            return format_error("Logged in user not found.", status=404)
 
 
 class ReactivateApi(ApiRoute):
@@ -203,15 +221,15 @@ class ReactivateApi(ApiRoute):
         body = request.get_json()
         email = body.get("email")
         password = body.get("password")
-        user = User.objects.get(email=email)
+        try:
+            user = User.objects.get(email=email)
 
-        if not user.check_password(password):
-            return format_error("Incorrect username or password.", 401)
+            if not user.check_password(password):
+                return format_error("Incorrect username or password.", 401)
 
-        if user:
             if user.active:
                 return format_response("Account already active.")
             user.activate()
             return format_response()
-
-        return format_error(f"User with email {email} not found.", status=404)
+        except:
+            return format_error("There is no account for that email address.", status=404)

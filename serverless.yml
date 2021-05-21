@@ -63,12 +63,15 @@ custom:
 functions:
   app:
     handler: wsgi_handler.handler
-    timeout: 20
+    timeout: 60
     events:
       - http: ANY /
       - http: 'ANY /{proxy+}'
     environment:
       MONGO_URI: ${env:MONGO_URI}
+      REDIS_PASS: ${env:REDIS_PASS}
+      REDIS_HOST: ${env:REDIS_HOST}
+      REDIS_PORT: ${env:REDIS_PORT}
   version:
     handler: nomenclate_api.handlers.version.handler
     events:

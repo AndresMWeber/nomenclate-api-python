@@ -39,7 +39,7 @@ class ConfigApi(ApiRoute):
         """
         try:
             config = Config(creator=User.get_from_jwt(), **request.get_json()).save()
-            return format_response(config, 201)
+            return format_response(config.to_mongo().to_dict(), 201)
         except (NotUniqueError, DuplicateKeyError) as e:
             LOG.error(e)
             return format_error("The specified configuration already exists.", 409)
@@ -61,8 +61,11 @@ class ConfigApi(ApiRoute):
                             schema: ErrorSimple
         """
         try:
-            request_json = request.get_json()
-            Config.objects.get(id=request_json.get("_id")).update(**request_json)
+            body = request.get_json()
+            id = body.get("_id")
+            LOG.info(f"Attempting to find config by id: {id}")
+            del body["_id"]
+            Config.objects.get(id=id).update(**body)
             return format_response(None, 204)
         except Exception as e:
             LOG.error(e)

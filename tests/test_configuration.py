@@ -31,8 +31,8 @@ class CreateConfigurationTest(BaseConfigurationTest):
         )
         self.assertEqual(str, type(response.json["name"]))
         self.assertEqual(dict, type(response.json["data"]))
-        self.assertEqual(dict, type(response.json["creator"]))
-        self.assertEqual(dict, type(response.json["_id"]))
+        self.assertEqual(str, type(response.json["creator"]))
+        self.assertEqual(str, type(response.json["_id"]))
         self.assertEqual(201, response.status_code)
 
     def test_incomplete_no_data(self):

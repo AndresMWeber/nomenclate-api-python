@@ -51,9 +51,10 @@ def create_app():
     app.json_encoder = JSONEncoder
     app.config["JWT_SECRET_KEY"] = getenv("SECRET") or "insecure"
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
+    app.config["PROPAGATE_EXCEPTIONS"] = True  # Necessary to propagate jwt auth errors.
 
     init_mongo(app)
-    init_blacklist(app, jwt)
+    init_blacklist(api, jwt)
     login_manager.init_app(app)
 
     [api.add_resource(route, path) for route, path in ROUTES]
