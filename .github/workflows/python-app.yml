@@ -40,7 +40,7 @@ jobs:
       - name: Run test suite
         run: poetry run poe test
       - name: Install coverage
-        run: pip3 install -U coverage
+        run: pip3 install -U coverage coverage[toml]
       - name: Convert to xml coverage file
         run: coverage xml
       - name: Archive code coverage results

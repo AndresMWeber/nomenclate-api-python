@@ -1,0 +1,9 @@
+coverage:
+  ignore:
+    - "tests/*"
+    - "**/*/__init__.py"
+    - "nomenclate_api/db/*.py"
+    - "api_spec.py"
+    - "openapi_plugin.py"
+    - "responses.py"
+    - "schemas.py"

@@ -6,6 +6,7 @@ from nomenclate_api.db.mongo import db
 
 
 class DBDocTest(unittest.TestCase):
+    json_content = {"Content-Type": "application/json"}
     routes = {
         "login": "/auth/login",
         "signup": "/auth/signup",

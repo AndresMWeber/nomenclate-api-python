@@ -28,3 +28,17 @@ class ProfileTest(DBDocTest):
         self.assertEqual(str, type(response.json["email"]))
         self.assertEqual(str, type(response.json["name"]))
         self.assertEqual(200, response.status_code)
+
+    def test_successful_active_config(self):
+        response = self.app.get(
+            self.routes["profile_active_config"], headers={"Authorization": self.token}
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertIsNone(response.json["configuration"])
+
+    def test_successful_configs(self):
+        response = self.app.get(
+            self.routes["profile_configs"], headers={"Authorization": self.token}
+        )
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(list, type(response.json["configurations"]))

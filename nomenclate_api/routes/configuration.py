@@ -63,8 +63,9 @@ class ConfigApi(ApiRoute):
         try:
             body = request.get_json()
             id = body.get("_id")
-            LOG.info(f"Attempting to find config by id: {id}")
-            del body["_id"]
+            body.pop("_id")
+            body.pop("creator")
+
             Config.objects.get(id=id).update(**body)
             return format_response(None, 204)
         except Exception as e:

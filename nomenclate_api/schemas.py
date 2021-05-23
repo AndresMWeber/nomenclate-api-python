@@ -38,6 +38,7 @@ class ConfigurationPostSchema(BaseSchema):
 
 class ConfigurationPutSchema(ConfigurationPostSchema):
     _id = fields.String(required=True)
+    creator = fields.String()
 
 
 class EmailSchema(BaseSchema):
