@@ -1,7 +1,9 @@
 [tool.poetry]
-authors = ["Andres Weber <andresmweber@gmail.com>"]
+name = "nomenclate-api"
 description = "An API for automating and generating strings based on arbitrary user-defined naming conventions"
+authors = ["Andres Weber <andresmweber@gmail.com>"]
 homepage = "https://nomenclate.andresmweber.com"
+version = "0.1.0"
 keywords = [
   "Poetry",
   "Virtual Environments",
@@ -15,10 +17,8 @@ keywords = [
   "convention",
 ]
 license = "MIT"
-name = "nomenclate-api"
 readme = "README.md"
 repository = "https://github.com/andresmweber/nomenclate-api-python/"
-version = "0.1.0"
 
 [tool.poetry.dependencies]
 Bcrypt-Flask = "^1.0.1"
@@ -29,12 +29,12 @@ Flask-RESTful = "^0.3.8"
 dnspython = "^2.1.0"
 flask-mongoengine = "^1.0.0"
 marshmallow = "^3.12.1"
-nomenclate = "^2.4.4"
 pymongo = "^3.11.3"
 python = "^3.6.2"
 python-dotenv = "^0.17.0"
 redis = "^3.5.3"
 toml = "^0.10.2"
+nomenclate = "^2.6.5"
 
 [tool.poetry.dev-dependencies]
 apispec = "^4.4.1"
