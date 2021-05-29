@@ -5,6 +5,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
 from flask_restful import Api
+from flask_session import Session
 from .config import ACCESS_EXPIRES
 from .utils.responses import JSONEncoder
 from .models.user import login_manager
@@ -21,7 +22,7 @@ from .routes.profile import ActiveConfigApi, ProfileConfigApi, ProfileApi
 from .routes.configuration import ConfigApi, ConfigByNameApi
 from .routes.nomenclate import NomenclateApi
 from .db.mongo import init_mongo
-from .db.blacklist import init_blacklist
+from .db.blacklist import init_blacklist, jwt_redis_blacklist
 
 
 ROUTES: Tuple[ApiRoute, str] = [
@@ -47,15 +48,20 @@ def create_app():
     Bcrypt(app)
     api = Api(app)
     jwt = JWTManager(app)
+    session_manager = Session()
 
     app.json_encoder = JSONEncoder
     app.config["JWT_SECRET_KEY"] = getenv("SECRET") or "insecure"
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
     app.config["PROPAGATE_EXCEPTIONS"] = True  # Necessary to propagate jwt auth errors.
+    app.config["PROPAGATE_EXCEPTIONS"] = True
+    app.config["SESSION_TYPE"] = "redis"
 
     init_mongo(app)
-    init_blacklist(api, jwt)
+    init_blacklist(app, jwt)
+
     login_manager.init_app(app)
+    session_manager.init_app(app)
 
     [api.add_resource(route, path) for route, path in ROUTES]
 

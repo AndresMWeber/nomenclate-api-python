@@ -1,9 +1,7 @@
 [tool.poetry]
-name = "nomenclate-api"
-description = "An API for automating and generating strings based on arbitrary user-defined naming conventions"
 authors = ["Andres Weber <andresmweber@gmail.com>"]
+description = "An API for automating and generating strings based on arbitrary user-defined naming conventions"
 homepage = "https://nomenclate.andresmweber.com"
-version = "0.1.0"
 keywords = [
   "Poetry",
   "Virtual Environments",
@@ -17,8 +15,10 @@ keywords = [
   "convention",
 ]
 license = "MIT"
+name = "nomenclate-api"
 readme = "README.md"
 repository = "https://github.com/andresmweber/nomenclate-api-python/"
+version = "0.1.0"
 
 [tool.poetry.dependencies]
 Bcrypt-Flask = "^1.0.1"
@@ -26,15 +26,16 @@ Flask = "^1.1.2"
 Flask-JWT-Extended = "^4.1.0"
 Flask-Login = "^0.5.0"
 Flask-RESTful = "^0.3.8"
+Flask-Session = "^0.3.2"
 dnspython = "^2.1.0"
 flask-mongoengine = "^1.0.0"
 marshmallow = "^3.12.1"
+nomenclate = "^2.6.5"
 pymongo = "^3.11.3"
 python = "^3.6.2"
 python-dotenv = "^0.17.0"
 redis = "^3.5.3"
 toml = "^0.10.2"
-nomenclate = "^2.6.5"
 
 [tool.poetry.dev-dependencies]
 apispec = "^4.4.1"
@@ -90,13 +91,13 @@ branch = true
 source = ["nomenclate_api"]
 
 [tool.coverage.report]
-ignore_errors = true
 exclude_lines = [
   "if self.debug:",
   "pragma: no cover",
   "raise NotImplementedError",
   "if __name__ == .__main__.:",
 ]
+ignore_errors = true
 omit = [
   "tests/*",
   "**/*/__init__.py",
