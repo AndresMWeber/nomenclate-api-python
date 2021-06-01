@@ -72,7 +72,7 @@ freeze = {shell = "poetry export -f requirements.txt > requirements.txt --withou
 # python script based task 
 mksandwich = {script = "my_package.sandwich:build"}
 # simple command based task
-test = "coverage run -m pytest --envfile ./.env.test"
+test = "pytest --envfile ./.env.test --cov-report term --cov=nomenclate_api"
 
 [tool.black]
 include = '\.pyi?$'
