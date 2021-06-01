@@ -17,6 +17,8 @@ components:
       properties:
         _id:
           type: string
+        creator:
+          type: string
         data:
           type: object
         name:
@@ -167,6 +169,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorSimple'
           description: The specified user account is not active.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: There is no account for that email address.
   /auth/logout:
     post:
       responses:
@@ -180,6 +188,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorSimple'
           description: The specified user account is not active.
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: There is no account for that email address.
       security:
       - JWTAuth: []
   /auth/exists:
@@ -244,6 +258,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorSimple'
           description: The user from the current credentials does not exist
+      security:
+      - JWTAuth: []
   /me/configs:
     get:
       responses:
@@ -259,21 +275,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorSimple'
           description: Missing config
+      security:
+      - JWTAuth: []
   /me/config:
-    get:
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Base'
-          description: Return the logged in user's active config
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorSimple'
-          description: Missing config
     post:
       responses:
         '200':
@@ -288,6 +292,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorSimple'
           description: Missing config
+      security:
+      - JWTAuth: []
+    get:
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Base'
+          description: Return the logged in user's active config
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: Missing config
+      security:
+      - JWTAuth: []
   /config:
     post:
       responses:
@@ -295,8 +317,8 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Base'
-          description: Return a nomenclate object
+                $ref: '#/components/schemas/ConfigResponse'
+          description: Return a config object
         '400':
           content:
             application/json:
@@ -309,16 +331,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorSimple'
           description: The specified configuration already exists.
-    delete:
-      responses:
-        '204':
-          description: Sucessfully deleted the requested configuration
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorSimple'
-          description: The requested resource does not exist.
+      security:
+      - JWTAuth: []
     put:
       responses:
         '204':
@@ -329,6 +343,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorSimple'
           description: The requested resource does not exist.
+      security:
+      - JWTAuth: []
   /config/{name}:
     get:
       parameters:
@@ -351,6 +367,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorSimple'
           description: The requested resource does not exist.
+      security:
+      - JWTAuth: []
+    delete:
+      responses:
+        '204':
+          description: Sucessfully deleted the requested configuration
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The requested resource does not exist.
+      security:
+      - JWTAuth: []
   /nomenclate:
     post:
       responses:
@@ -366,16 +396,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorSimple'
           description: The supplied payload is invalid.
-    delete:
-      responses:
-        '204':
-          description: Sucessfully deleted the nomenclate object
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorSimple'
-          description: The nomenclate object is invalid.
+      security:
+      - JWTAuth: []
     put:
       responses:
         '204':
@@ -386,6 +408,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorSimple'
           description: The supplied payload is invalid.
+      security:
+      - JWTAuth: []
+    delete:
+      responses:
+        '204':
+          description: Sucessfully deleted the nomenclate object
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorSimple'
+          description: The nomenclate object is invalid.
+      security:
+      - JWTAuth: []
 servers:
 - description: Production Server
   url: https://nom-api.andresmweber.com/
