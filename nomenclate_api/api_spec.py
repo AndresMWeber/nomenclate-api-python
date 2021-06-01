@@ -1,6 +1,5 @@
 import re
 import json
-from flask_jwt_extended.view_decorators import jwt_required
 from marshmallow import Schema
 from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
@@ -59,7 +58,11 @@ def write_doc_files(spec, version):
         f.write(spec.to_yaml())
 
 
-if __name__ == "__main__":
+def run():
     from nomenclate_api.api import create_app, ROUTES
 
     create_spec(create_app(), ROUTES)
+
+
+if __name__ == "__main__":
+    run()

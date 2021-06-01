@@ -25,6 +25,9 @@
                     "_id": {
                         "type": "string"
                     },
+                    "creator": {
+                        "type": "string"
+                    },
                     "data": {
                         "type": "object"
                     },
@@ -268,6 +271,16 @@
                             }
                         },
                         "description": "The specified user account is not active."
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorSimple"
+                                }
+                            }
+                        },
+                        "description": "There is no account for that email address."
                     }
                 }
             }
@@ -290,6 +303,16 @@
                             }
                         },
                         "description": "The specified user account is not active."
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorSimple"
+                                }
+                            }
+                        },
+                        "description": "There is no account for that email address."
                     }
                 },
                 "security": [
@@ -371,34 +394,17 @@
             }
         },
         "/config": {
-            "delete": {
-                "responses": {
-                    "204": {
-                        "description": "Sucessfully deleted the requested configuration"
-                    },
-                    "404": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorSimple"
-                                }
-                            }
-                        },
-                        "description": "The requested resource does not exist."
-                    }
-                }
-            },
             "post": {
                 "responses": {
                     "201": {
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Base"
+                                    "$ref": "#/components/schemas/ConfigResponse"
                                 }
                             }
                         },
-                        "description": "Return a nomenclate object"
+                        "description": "Return a config object"
                     },
                     "400": {
                         "content": {
@@ -420,7 +426,12 @@
                         },
                         "description": "The specified configuration already exists."
                     }
-                }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
             },
             "put": {
                 "responses": {
@@ -437,10 +448,37 @@
                         },
                         "description": "The requested resource does not exist."
                     }
-                }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
             }
         },
         "/config/{name}": {
+            "delete": {
+                "responses": {
+                    "204": {
+                        "description": "Sucessfully deleted the requested configuration"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorSimple"
+                                }
+                            }
+                        },
+                        "description": "The requested resource does not exist."
+                    }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
+            },
             "get": {
                 "parameters": [
                     {
@@ -474,7 +512,12 @@
                         },
                         "description": "The requested resource does not exist."
                     }
-                }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
             }
         },
         "/me": {
@@ -500,7 +543,12 @@
                         },
                         "description": "The user from the current credentials does not exist"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
             }
         },
         "/me/config": {
@@ -526,7 +574,12 @@
                         },
                         "description": "Missing config"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
             },
             "post": {
                 "responses": {
@@ -550,7 +603,12 @@
                         },
                         "description": "Missing config"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
             }
         },
         "/me/configs": {
@@ -576,7 +634,12 @@
                         },
                         "description": "Missing config"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
             }
         },
         "/nomenclate": {
@@ -595,7 +658,12 @@
                         },
                         "description": "The nomenclate object is invalid."
                     }
-                }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
             },
             "post": {
                 "responses": {
@@ -619,7 +687,12 @@
                         },
                         "description": "The supplied payload is invalid."
                     }
-                }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
             },
             "put": {
                 "responses": {
@@ -636,7 +709,12 @@
                         },
                         "description": "The supplied payload is invalid."
                     }
-                }
+                },
+                "security": [
+                    {
+                        "JWTAuth": []
+                    }
+                ]
             }
         }
     },
