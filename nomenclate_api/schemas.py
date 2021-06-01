@@ -69,4 +69,5 @@ SCHEMAS = [
     EmailPasswordSchema,
     NameEmailPasswordSchema,
     ExistsResponseSchema,
+    ConfigResponseSchema,
 ]
