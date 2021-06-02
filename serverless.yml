@@ -46,6 +46,7 @@ custom:
   wsgi:
     app: nomenclate_api.api.app
     packRequirements: false
+    pythonBin: python3
   pythonRequirements:
     dockerizePip: non-linux
   customDomain:

@@ -38,6 +38,7 @@ redis = "^3.5.3"
 toml = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
+Werkzeug = "^2.0.1"
 apispec = "^4.4.1"
 apispec-webframeworks = "^0.5.2"
 black = "^21.5b1"
@@ -55,8 +56,8 @@ build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core>=1.0.0"]
 
 [tool.poetry.scripts]
-run = "wsgi:main"
 docs = "nomenclate_api.api_spec:run"
+run = "wsgi:main"
 
 [tool.poetry.urls]
 issues = "https://github.com/andresmweber/nomenclate-api-python/issues"
@@ -74,7 +75,7 @@ freeze = {shell = "poetry export -f requirements.txt > requirements.txt --withou
 # python script based task 
 mksandwich = {script = "my_package.sandwich:build"}
 # simple command based task
-test = "pytest --envfile ./.env.test --cov-report term --cov=nomenclate_api"
+test = "pytest --envfile ./.env.test -r w --cov-report term --cov=nomenclate_api"
 
 [tool.black]
 include = '\.pyi?$'
@@ -86,6 +87,9 @@ env_files = [
   ".env.test",
 ]
 env_override_existing_values = 1
+filterwarnings = [
+  "ignore::DeprecationWarning",
+]
 
 [tool.coverage.run]
 branch = true
