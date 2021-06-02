@@ -9,7 +9,7 @@ def blacklist_token(token):
     try:
         session.set(token, "", ex=ACCESS_EXPIRES)
     except Exception as e:
-        LOG.warning(e)
+        LOG.debug(e)
 
 
 def init_blacklist(app, jwt):
@@ -18,6 +18,7 @@ def init_blacklist(app, jwt):
             host=REDIS_HOST, password=REDIS_PASS, port=REDIS_PORT, db=0, decode_responses=False
         )
         app.config["SESSION_REDIS"] = jwt_redis_blacklist
+        app.config["SESSION_TYPE"] = "redis"
     except:
         LOG.log_error("Could not connect to redis.")
 
