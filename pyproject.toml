@@ -38,15 +38,14 @@ redis = "^3.5.3"
 toml = "^0.10.2"
 
 [tool.poetry.dev-dependencies]
-Werkzeug = "^2.0.1"
 apispec = "^4.4.1"
 apispec-webframeworks = "^0.5.2"
 black = "^21.5b1"
 coverage = "^5.5"
 jsonschema = "^3.2.0"
 poethepoet = "^0.10.0"
-pytest = "^5.2"
-pytest-cov = "^2.11.1"
+pytest = "^6.2.4"
+pytest-cov = "^2.12.1"
 pytest-dotenv = "^0.5.2"
 pytest-html = "^3.1.1"
 requests = "^2.25.1"
@@ -75,7 +74,7 @@ freeze = {shell = "poetry export -f requirements.txt > requirements.txt --withou
 # python script based task 
 mksandwich = {script = "my_package.sandwich:build"}
 # simple command based task
-test = "pytest --envfile ./.env.test -r w --cov-report term --cov=nomenclate_api"
+test = "pytest"
 
 [tool.black]
 include = '\.pyi?$'
@@ -84,31 +83,33 @@ target-version = ['py38']
 
 [tool.pytest.ini_options]
 env_files = [
-  ".env.test",
+  "./.env.test",
 ]
 env_override_existing_values = 1
 filterwarnings = [
   "ignore::DeprecationWarning",
 ]
+addopts = "--cov=nomenclate_api --cov-report term -v -r w"
 
 [tool.coverage.run]
 branch = true
 source = ["nomenclate_api"]
 
 [tool.coverage.report]
+show_missing = true
+ignore_errors = true
 exclude_lines = [
   "if self.debug:",
   "pragma: no cover",
   "raise NotImplementedError",
   "if __name__ == .__main__.:",
 ]
-ignore_errors = true
 omit = [
   "tests/*",
   "**/*/__init__.py",
   "nomenclate_api/db/*.py",
-  "api_spec.py",
-  "openapi_plugin.py",
-  "schemas.py",
-  "responses.py",
+  "nomenclate_api/api_spec.py",
+  "nomenclate_api/openapi_plugin.py",
+  "nomenclate_api/schemas.py",
+  "nomenclate_api/utils/responses.py"
 ]

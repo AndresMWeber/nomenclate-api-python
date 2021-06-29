@@ -5,7 +5,11 @@ from nomenclate_api.api import app
 from nomenclate_api.db.mongo import db
 
 
-class DBDocTest(unittest.TestCase):
+class BaseTest(unittest.TestCase):
+    pass
+
+
+class DBDocTest(BaseTest):
     json_content = {"Content-Type": "application/json"}
     routes = {
         "login": "/auth/login",

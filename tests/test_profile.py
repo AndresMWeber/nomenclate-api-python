@@ -1,4 +1,3 @@
-import json
 from .base import DBDocTest
 
 email = "testman@gmail.com"

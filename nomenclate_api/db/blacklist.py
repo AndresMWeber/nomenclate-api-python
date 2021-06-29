@@ -13,14 +13,16 @@ def blacklist_token(token):
 
 
 def init_blacklist(app, jwt):
-    try:
-        jwt_redis_blacklist = StrictRedis(
-            host=REDIS_HOST, password=REDIS_PASS, port=REDIS_PORT, db=0, decode_responses=False
-        )
-        app.config["SESSION_REDIS"] = jwt_redis_blacklist
-        app.config["SESSION_TYPE"] = "redis"
-    except:
-        LOG.log_error("Could not connect to redis.")
+    jwt_redis_blacklist = None
+    if REDIS_PASS and REDIS_HOST and REDIS_PORT:
+        try:
+            jwt_redis_blacklist = StrictRedis(
+                host=REDIS_HOST, password=REDIS_PASS, port=REDIS_PORT, db=0, decode_responses=False
+            )
+            app.config["SESSION_REDIS"] = jwt_redis_blacklist
+            app.config["SESSION_TYPE"] = "redis"
+        except:
+            LOG.log_error("Could not connect to redis.")
 
     @jwt.token_in_blocklist_loader
     def check_if_token_is_revoked(_, jwt_payload):
