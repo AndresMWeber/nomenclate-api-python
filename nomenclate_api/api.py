@@ -20,7 +20,8 @@ from .routes.auth import (
 )
 from .routes.profile import ActiveConfigApi, ProfileConfigApi, ProfileApi
 from .routes.configuration import ConfigApi, ConfigByNameApi
-from .routes.nomenclate import NomenclateApi
+from .routes.nomenclate import NomenclateApi, NomenclateApiById
+from .routes.formatted import FormattedApi
 from .db.mongo import init_mongo
 from .db.blacklist import init_blacklist
 
@@ -38,6 +39,8 @@ ROUTES: Tuple[ApiRoute, str] = [
     (ConfigApi, "/config"),
     (ConfigByNameApi, "/config/<string:name>"),
     (NomenclateApi, "/nomenclate"),
+    (NomenclateApiById, "/nomenclate/<string:id>"),
+    (FormattedApi, "/format/<string:id>"),
 ]
 
 

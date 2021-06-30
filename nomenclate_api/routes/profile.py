@@ -114,9 +114,8 @@ class ActiveConfigApi(ApiRoute):
         """
         try:
             user = User.get_from_jwt()
-            user.config = Config.objects.get(
-                creator=User.get_from_jwt(), name=request.json.get("name")
-            )
+            config = Config.objects.get(creator=user.id, name=request.json.get("name"))
+            user.config = config
             user.save()
             return format_response()
         except Exception as e:

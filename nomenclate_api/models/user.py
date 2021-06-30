@@ -1,6 +1,7 @@
 from flask_login import UserMixin, LoginManager
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_jwt_extended import get_jwt_identity
+from nomenclate_api.config import LOG
 from nomenclate_api.db.mongo import db
 
 login_manager = LoginManager()
@@ -31,8 +32,11 @@ class User(UserMixin, db.Document):
     @classmethod
     def get_from_jwt(cls):
         try:
-            return cls.objects.get(id=get_jwt_identity())
-        except:
+            jwt_id = get_jwt_identity()
+            user = cls.objects.get(id=jwt_id)
+            return user
+        except Exception as e:
+            LOG.error("Error retrieving user from jwt:", e)
             return None
 
 

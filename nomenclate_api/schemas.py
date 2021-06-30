@@ -9,10 +9,22 @@ class BaseSchema(Schema):
 
 
 class ConfigResponseSchema(BaseSchema):
+    _id = fields.String(required=True)
     name = fields.String(required=True)
-    data = fields.String(required=True)
+    data = fields.Dict(required=True)
     creator = fields.Dict(required=True)
     meta = fields.Dict(required=True)
+
+
+class NomenclateResponseSchema(BaseSchema):
+    _id = fields.String(required=True)
+    name = fields.String(required=True)
+    data = fields.Dict(required=True)
+    config = fields.String(required=True)
+    creator = fields.Dict(required=True)
+    meta = fields.Dict(required=True)
+    format_string = fields.String()
+    org = fields.String()
 
 
 class LoginResponseSchema(BaseSchema):
@@ -20,7 +32,7 @@ class LoginResponseSchema(BaseSchema):
 
 
 class SignupResponseSchema(BaseSchema):
-    id = fields.String(required=True)
+    _id = fields.String(required=True)
 
 
 class ErrorSimpleSchema(BaseSchema):
@@ -70,4 +82,5 @@ SCHEMAS = [
     NameEmailPasswordSchema,
     ExistsResponseSchema,
     ConfigResponseSchema,
+    NomenclateResponseSchema
 ]

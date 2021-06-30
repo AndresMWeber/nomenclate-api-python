@@ -13,7 +13,7 @@ def format_response(payload: dict = None, status: int = 200) -> Tuple[str, int]:
     return make_response(jsonify(payload), status)
 
 
-def format_error(message: Union[str, List[str]], status: int) -> Tuple[str, int]:
+def format_error(message: Union[str, List[str]], status: int = 400) -> Tuple[str, int]:
     return format_response({"error": message}, status)
 
 
