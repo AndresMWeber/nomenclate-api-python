@@ -27,7 +27,7 @@ class CreateNomenclateTest(BaseNomenclateTest):
         payload = self.payload({"name": "test_nom"})
 
         response = self.app.post(
-            self.routes["config"],
+            self.routes["nomenclate"],
             headers={"Authorization": self.token, **self.json_content},
             data=payload,
         )
@@ -38,7 +38,7 @@ class CreateNomenclateTest(BaseNomenclateTest):
         payload = self.payload({"data": {"side": "left", "type": "object"}})
 
         response = self.app.post(
-            self.routes["config"],
+            self.routes["nomenclate"],
             headers={"Authorization": self.token, **self.json_content},
             data=payload,
         )
@@ -46,52 +46,56 @@ class CreateNomenclateTest(BaseNomenclateTest):
         self.assertEqual(400, response.status_code)
 
 
-# class GetConfigurationTest(BaseConfigurationTest):
-#     def setUp(self):
-#         super(GetConfigurationTest, self).setUp()
-#         # Create Config
-#         self.config = self.create_config()
+class GetNomenclateTest(BaseNomenclateTest):
+    nomenclate_data = {"side": "right", "type": "locator"}
 
-#     def test_successful(self):
-#         response = self.app.get(
-#             f"{self.routes['config']}/{self.config['name']}", headers={"Authorization": self.token}
-#         )
-#         self.assertEqual(dict, type(response.json["data"]))
-#         self.assertEqual(str, type(response.json["creator"]))
-#         self.assertEqual(str, type(response.json["_id"]))
-#         self.assertEqual(200, response.status_code)
+    def setUp(self):
+        super(GetNomenclateTest, self).setUp()
+        self.config = self.create_nomenclate(data=self.nomenclate_data.copy())
 
-#     def test_does_not_exist(self):
-#         response = self.app.get(
-#             self.routes["config"] + "/test_config_missing", headers={"Authorization": self.token}
-#         )
-#         self.assertEqual(str, type(response.json["error"]))
-#         self.assertEqual(404, response.status_code)
+    def test_successful(self):
+        response = self.app.get(
+            f"{self.routes['nomenclate']}/{self.nomenclate['_id']}",
+            headers={"Authorization": self.token},
+        )
+        self.assertEqual(dict, type(response.json["data"]))
+        self.assertEqual(str, type(response.json["creator"]))
+        self.assertEqual(str, type(response.json["_id"]))
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(self.nomenclate_data, response.json["data"])
 
-
-# class PutConfigurationTest(BaseConfigurationTest):
-#     def test_successful_put(self):
-#         payload = self.payload(
-#             {
-#                 **self.create_config(),
-#                 **{
-#                     "name": "test_config_put",
-#                     "data": {"suffix": "post", "side": "right", "type": "object"},
-#                 },
-#             },
-#         )
-#         response = self.app.put(
-#             self.routes["config"],
-#             headers={"Authorization": self.token, **self.json_content},
-#             data=payload,
-#         )
-#         self.assertEqual(204, response.status_code)
+    def test_does_not_exist(self):
+        response = self.app.get(
+            f"{self.routes['nomenclate']}/1234",
+            headers={"Authorization": self.token},
+        )
+        self.assertEqual(str, type(response.json["error"]))
+        self.assertEqual(404, response.status_code)
 
 
-# class DeleteConfigurationTest(BaseConfigurationTest):
-#     def test_successful_delete(self):
-#         config = self.create_config()
-#         response = self.app.delete(
-#             f'{self.routes["config"]}/{config["name"]}', headers={"Authorization": self.token}
-#         )
-#         self.assertEqual(200, response.status_code)
+class PutNomenclateTest(BaseNomenclateTest):
+    def test_successful_put(self):
+        payload = self.payload(
+            {
+                **self.create_nomenclate(),
+                **{
+                    "name": "test_nomenclate_put",
+                    "data": {"suffix": "post", "side": "center", "type": "polgyon"},
+                },
+            },
+        )
+        response = self.app.put(
+            f"{self.routes['nomenclate']}",
+            headers={"Authorization": self.token, **self.json_content},
+            data=payload,
+        )
+        self.assertEqual(204, response.status_code)
+
+
+class DeleteNomenclateTest(BaseNomenclateTest):
+    def test_successful_delete(self):
+        nom = self.create_nomenclate()
+        response = self.app.delete(
+            f'{self.routes["nomenclate"]}/{nom["_id"]}', headers={"Authorization": self.token}
+        )
+        self.assertEqual(200, response.status_code)

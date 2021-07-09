@@ -65,7 +65,7 @@ class BaseTest(unittest.TestCase):
             {
                 "name": f"test_nom{hash(random.getrandbits(128))}",
                 "data": data,
-                "format_string": "name_side_suffix",
+                "format_string": "name_side_type",
             }
         )
         response = self.app.post(

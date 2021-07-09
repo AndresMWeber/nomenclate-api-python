@@ -62,8 +62,7 @@ class ConfigApi(ApiRoute):
         """
         try:
             body = request.get_json()
-            id = body.get("_id")
-            body.pop("_id")
+            id = self.strip_body_id(body)
             body.pop("creator")
 
             Config.objects.get(id=id).update(**body)

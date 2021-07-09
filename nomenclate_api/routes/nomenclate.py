@@ -1,14 +1,19 @@
 from nomenclate_api.db.mongo import LOG
+from mongoengine.errors import NotUniqueError
+from pymongo.errors import DuplicateKeyError
+from pprint import pprint
 from flask import request
 from flask_jwt_extended import jwt_required
 from nomenclate_api.models.nomenclate import Nomenclate
 from nomenclate_api.models.user import User
+from nomenclate_api.schemas import NomenclatePostSchema, NomenclatePutSchema
 from nomenclate_api.utils.responses import format_response, format_error
-from .base import ApiRoute
+from .base import ApiRoute, validate_schema
 
 
 class NomenclateApi(ApiRoute):
     @jwt_required()
+    @validate_schema(NomenclatePostSchema())
     def post(self):
         """Create Nomenclate from Active Config + Payload
         ---
@@ -42,11 +47,12 @@ class NomenclateApi(ApiRoute):
                 return format_error("There was a problem retrieving your active config.")
             nomenclate = Nomenclate(**body).save()
             return format_response({"nomenclate": nomenclate.to_mongo().to_dict()}, 201)
-        except Exception as e:
+        except (NotUniqueError, DuplicateKeyError) as e:
             LOG.error(e)
             return format_error("The supplied payload is invalid.", 400)
 
     @jwt_required()
+    @validate_schema(NomenclatePutSchema())
     def put(self):
         """Update Nomenclate from Active Config + Payload
         ---
@@ -63,11 +69,10 @@ class NomenclateApi(ApiRoute):
                             schema: ErrorSimple
         """
         try:
-            body = request.get_json()
-            id = body.get("_id")
-            body.pop("_id")
-            Nomenclate.objects.get(id=id).update(**body)
-            return format_response()
+            body = self.convert_object_ids(["config", "creator"], request.get_json())
+            id = self.strip_body_id(body)
+            Nomenclate.from_request(id).update(**body)
+            return format_response(None, 204)
         except Exception as e:
             LOG.error(e)
             return format_error("The supplied payload is invalid.", 400)
@@ -116,7 +121,7 @@ class NomenclateApiById(ApiRoute):
                             schema: ErrorSimple
         """
         try:
-            Nomenclate.objects.get(id=id).delete()
+            Nomenclate.from_request(id).delete()
             return format_response()
         except:
             return format_error("The requested configuration does not exist.", 404)

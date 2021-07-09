@@ -9,13 +9,14 @@ class BaseFormattedTest(BaseNomenclateTest):
 
 class GetFormattedTest(BaseFormattedTest):
     def test_successful(self):
+        self.create_nomenclate({"side": "left", "type": "locator", "name": "john"})
         id = self.nomenclate.get("_id")
         response = self.app.get(
             f"{self.routes['formatted']}/{id}",
             headers={"Authorization": self.token},
         )
-        print(response.json)
         self.assertEqual(str, type(response.json["data"]))
+        self.assertEqual("john_l_LOC", response.json["data"])
         self.assertEqual(200, response.status_code)
 
     def test_does_not_exist(self):

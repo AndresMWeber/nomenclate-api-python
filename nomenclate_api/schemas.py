@@ -16,15 +16,22 @@ class ConfigResponseSchema(BaseSchema):
     meta = fields.Dict(required=True)
 
 
-class NomenclateResponseSchema(BaseSchema):
-    _id = fields.String(required=True)
+class NomenclatePostSchema(BaseSchema):
     name = fields.String(required=True)
     data = fields.Dict(required=True)
+    config = fields.String()
+    format_string = fields.String()
+    org = fields.String()
+
+class NomenclatePutSchema(NomenclatePostSchema):
+    _id = fields.String(required=True)
+    creator = fields.String()
+
+class NomenclateResponseSchema(NomenclatePostSchema):
+    _id = fields.String(required=True)
     config = fields.String(required=True)
     creator = fields.Dict(required=True)
     meta = fields.Dict(required=True)
-    format_string = fields.String()
-    org = fields.String()
 
 
 class LoginResponseSchema(BaseSchema):
@@ -82,5 +89,5 @@ SCHEMAS = [
     NameEmailPasswordSchema,
     ExistsResponseSchema,
     ConfigResponseSchema,
-    NomenclateResponseSchema
+    NomenclateResponseSchema,
 ]
